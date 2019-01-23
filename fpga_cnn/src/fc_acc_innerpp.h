@@ -195,8 +195,6 @@ class fc_acc
 #endif
 #endif
 
-#pragma HLS DATAFLOW
-
         for (int m = 0; m < M; m += iTm)
         {
 
