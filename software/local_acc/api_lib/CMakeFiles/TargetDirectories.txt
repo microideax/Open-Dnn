@@ -1,0 +1,3 @@
+/home/adsc/work/local_acc/api_lib/CMakeFiles/rebuild_cache.dir
+/home/adsc/work/local_acc/api_lib/CMakeFiles/edit_cache.dir
+/home/adsc/work/local_acc/api_lib/CMakeFiles/api_lib.dir

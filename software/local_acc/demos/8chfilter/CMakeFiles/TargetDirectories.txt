@@ -1,0 +1,3 @@
+/home/adsc/work/local_acc/demos/8chfilter/CMakeFiles/edit_cache.dir
+/home/adsc/work/local_acc/demos/8chfilter/CMakeFiles/rebuild_cache.dir
+/home/adsc/work/local_acc/demos/8chfilter/CMakeFiles/filter.dir
