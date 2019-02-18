@@ -5,10 +5,16 @@
 ## Hardware requirement
 
 ## Software requirement
+- Ubuntu > 16.04
+- Python > 3.5
+- GCC version > 5.4
+- Xilinx vivado_hls 2018.1
+- Xilinx vivado 2018.1
+- Caffe and the required libraries
 
+## Brief mannual
 <details>
 <summary><big><strong>GitHub Repository Structure</strong></big></summary>
-
 ```sh
 CHaiDNN/
 |
@@ -30,6 +36,10 @@ CHaiDNN/
     `-- testbench
 
 ```
+</details>
+<details>
+<summary><big><strong>Stepwised user guide</strong></big></summary>
+
 </details>
 
 ## Run demos
