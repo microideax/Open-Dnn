@@ -160,7 +160,7 @@ public:
         Itf w_tmp = 0;
         for (int k1 = 0; k1 < K; k1++) {
             for (int k2 = 0; k2 < K; k2++) {
-                for (int j = 0; j < Tn; j++) { // Tn smaller than 32
+                for (int j = 0; j < Tn && j < N; j++) { // Tn smaller than 32
 #pragma HLS PIPELINE
                     for (int i = 0; i < Tm; i+=32) { // Tm greater than 32
                     	w_tmp = *(layer_weights + weight_offset + ((j + n)/32)* M * K * K + (i + m) * K * K + k1*K + k2);
@@ -272,12 +272,21 @@ public:
         T in_buf_0[Tn][(Tr - 1) * S_max + K_max][(Tc - 1) * S_max + K_max];
         W w_buf_0[Tn][Tm][K_max][K_max];
         W b_buf_0[Tm];
+        T in_buf_1[Tn][(Tr - 1) * S_max + K_max][(Tc - 1) * S_max + K_max];
+        W w_buf_1[Tn][Tm][K_max][K_max];
+        W b_buf_1[Tm];
         G out_buf_0[Tm][Tr][Tc];
+
+        bool com_ptr = 0;
 
 #pragma HLS ARRAY_PARTITION variable = in_buf_0 complete dim = 1
 #pragma HLS ARRAY_PARTITION variable = w_buf_0 complete dim = 1
 #pragma HLS ARRAY_PARTITION variable = w_buf_0 complete dim = 2
 #pragma HLS ARRAY_PARTITION variable = b_buf_0 complete
+#pragma HLS ARRAY_PARTITION variable = in_buf_1 complete dim = 1
+#pragma HLS ARRAY_PARTITION variable = w_buf_1 complete dim = 1
+#pragma HLS ARRAY_PARTITION variable = w_buf_1 complete dim = 2
+#pragma HLS ARRAY_PARTITION variable = b_buf_1 complete
 #pragma HLS ARRAY_PARTITION variable = out_buf_0 complete dim = 1
 
         //--------------------------Initial data load ---------------------------------------------//
@@ -287,23 +296,27 @@ public:
             {
                 for (int m = 0; m < M; m += Tm)
                 {
-                    for (int n = 0; n < N; n += Tn)
+                    for (int n = 0; n < N + Tn; n += Tn)
                     {
-
-                        //--------------------------Load input B W D in ping-pong manner-------------------------//
-                        b_buf_load(b_buf_0, layer_bias, bias_offset, m);
-
-//                        w_buf_load_512_tm(w_buf_0, i_weight, weight_offset, n, m, K, N, M);
-
-                        in_buf_load(inport, in_buf_0, i_data, out_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
-
-                        //------------------------------compute buffered data -----------------------------------//
-                        conv_engine(in_buf_0, w_buf_0, b_buf_0, out_buf_0, S, n, N, r, c, K, R_OUT, C_OUT, 0, 0);
-
-                        //---------------------------transfer output data----------------------------------------//
-                        output_res_512(out_buf_0,out_data,out_offset, n, m, r, c, N, M, R_OUT, C_OUT, act);
-
+                    	if (n % 2 == 0){
+                    		//--------------------------Load input B W D in ping-pong manner-------------------------//
+                    		b_buf_load(b_buf_0, layer_bias, bias_offset, m);
+                    		w_buf_load_512_tm(w_buf_0, i_weight, weight_offset, n, m, K, N, M);
+                    		in_buf_load(inport, in_buf_0, i_data, out_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
+                    		//------------------------------compute buffered data -----------------------------------//
+                    		conv_engine(in_buf_1, w_buf_1, b_buf_1, out_buf_0, S, n-Tn, N, r, c, K, R_OUT, C_OUT, 0, 0);
+                    	} else {
+                            //--------------------------Load input B W D in ping-pong manner-------------------------//
+                            b_buf_load(b_buf_1, layer_bias, bias_offset, m);
+                            w_buf_load_512_tm(w_buf_1, i_weight, weight_offset, n, m, K, N, M);
+                            in_buf_load(inport, in_buf_1, i_data, out_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
+                            //------------------------------compute buffered data -----------------------------------//
+                            conv_engine(in_buf_0, w_buf_0, b_buf_0, out_buf_0, S, n-Tn, N, r, c, K, R_OUT, C_OUT, 0, 0);
+                    	}
+//                        com_ptr = !com_ptr;
                 }
+                //---------------------------transfer output data----------------------------------------//
+                output_res_512(out_buf_0,out_data,out_offset, N, m, r, c, N, M, R_OUT, C_OUT, act);
             }
         }
     }
