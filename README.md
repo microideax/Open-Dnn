@@ -13,6 +13,7 @@
 - Caffe and the required libraries
 
 ## Brief mannual
+
 <details>
 <summary><big><strong>GitHub Repository Structure</strong></big></summary>
 ```sh
@@ -36,10 +37,6 @@ CHaiDNN/
     `-- testbench
 
 ```
-</details>
-<details>
-<summary><big><strong>Stepwised user guide</strong></big></summary>
-
 </details>
 
 ## Run demos
