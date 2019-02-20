@@ -1,0 +1,21 @@
+Network Structure: Input Convolution ReLU MaxPooling Convolution(padding,group) ReLU MaxPooling Convolution(padding) ReLU Convolution(padding,group) ReLU Convolution(padding,group) ReLU MaxPooling InnerProduct ReLU Dropout InnerProduct ReLU Dropout InnerProduct Softmax
+nn_in_data_size_conv: 227 27 13 13 13
+nn_channel_size_conv: 11 5 3 3 3
+nn_padding_conv: 0 2 1 1 1
+nn_stride_conv: 4 1 1 1 1
+nn_in_number_conv: 3 96 256 384 384
+nn_out_number_conv: 96 256 384 384 256
+nn_group_conv: 1 2 1 2 2
+nn_bias_conv: 96 256 384 384 256
+nn_in_data_size_pooling: 55 27 13
+nn_channel_size_pooling: 3 3 3
+nn_padding_pooling: 0 0 0
+nn_stride_pooling: 2 2 2
+nn_in_number_pooling: 96 256 256
+nn_in_data_size_fc: 6 1 1
+nn_in_number_fc: 256 4096 4096
+nn_out_number_fc: 4096 4096 1000
+nn_channel_size_fc: 6 1 1
+conv_cut_flag: 1 1 0 0 1
+pool_cut_flag: 1 1 1
+fc_cut_flag: 1 1 1
