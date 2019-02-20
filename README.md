@@ -24,8 +24,9 @@ Cloud-Dnn is an open-source framework that maps DNN models trained by Caffe to F
 
 <details>
 <summary><big><strong>GitHub Repository Structure</strong></big></summary>
+
 ```sh
-CHaiDNN/
+Open-Dnn/
 |
 |-- LICENSE
 |-- README.md
