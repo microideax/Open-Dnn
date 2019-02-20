@@ -1,0 +1,24 @@
+General terms and conditions for use of the Open-Dnn software. The software 
+programs comprising "Open-Dnn" and the documentation provided with them are 
+copyright Yao Chen, Deming Chen, the Advanced Digital Sciences Center, Singapore 
+and the University of Illinois at Urbana-Champaign.
+
+Only non-commercial, not-for-profit use of this software is permitted. No part 
+of this software may be incorporated into a commercial product without the 
+written consent of the authors (Yao Chen and Deming Chen).  Similarly, use of 
+this software to assist in the development of new commercial FPGA designs is 
+prohibited, unless the written consent of the authors is obtained.
+
+This software is provided "as is" with no warranties or guarantees of support. 
+All users of the software must take the copy from this site. You may modify or 
+use the source code for other non-commercial, not-for-profit research endeavours,
+provided that all copyright attribution on the source code is retained, and the
+original or modified source code is not redistributed, in whole or in part, or
+included in or with any commercial product, except by written agreement with
+the authors, and full and complete attribution for use of the code is given in
+any resulting publications. Subject to these conditions, the software is
+provided free of charge to all interested parties.
+
+Donations in the form of research grants to promote further research and
+development on the tools will be gladly accepted, either anonymously or with
+attribution on our future publications. 

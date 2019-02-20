@@ -1,16 +1,23 @@
-# Open-Dnn: An open framework for mapping DNN models to cloud FPGAs
+# Cloud-Dnn
 
 ## Introduction
+Cloud-Dnn is an open-source framework that maps DNN models trained by Caffe to FPGAs in the cloud for inference acceleration. It generates new C++ network description based on our pre-designed synthesizable function template library. The structural optimization for FPGA implementation is provided during the synthesizable code generation. The purpose of Cloud-Dnn is to take advantage of HLS design methodology and providing more flexible and understandable DNN acceleration on cloud FPGAs.
 
 ## Hardware requirement
+- Local cluster
+-UltraScale+ VU118 board with PCIe connection
+- AWS cluster
+-AWS F1.2Xlarge instance
 
 ## Software requirement
-- Ubuntu > 16.04
-- Python > 3.5
-- GCC version > 5.4
+- Python
+- GCC
 - Xilinx vivado_hls 2018.1
 - Xilinx vivado 2018.1
-- Caffe and the required libraries
+- Caffe and the required libraries (including Pycaffe)
+- Drivers
+-Local: UltraScale+ board PCIe driver, DMA driver
+-AWS: AWS shell IP, EDMA driver
 
 ## Brief mannual
 
@@ -39,16 +46,3 @@ CHaiDNN/
 ```
 </details>
 
-## Run demos
-
-<details>
-<summary><strong>Using Pre-built demos</strong></summary>
-<a name="Pre-built"></a>
-
-</details>
-
-<details>
-<summary><strong>Customize demos</strong></summary>
-<a name="From-source"></a>
-
-</details>
