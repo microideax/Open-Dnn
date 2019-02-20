@@ -37,10 +37,10 @@ Open-Dnn/
 |-- scripts
 |   |-- compile
 |   |-- hls_impl
-|   `-- mem_gen
-|-- software
+|   `-- sys_gen
+|-- acc_runtime
 |   |-- local_acc
-|   `-- cloud_acc
+|   `-- aws_acc
 `-- fpga_cnn
     |-- src
     `-- testbench
