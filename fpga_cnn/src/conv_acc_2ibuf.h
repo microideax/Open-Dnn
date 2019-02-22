@@ -17,39 +17,11 @@ private:
 public:
     conv_acc() : conv_layer_number(0) { conv_layer_number = 0; };
 
-    ////------------------------------C++ debugging functions---------------------------------------////
-    // Reset output buffer
-    void out_buf_reset(G buf[][Tr][Tc]) {
-        for (int i = 0; i < Tm; i++) {
-            for (int j = 0; j < Tr; j++) {
-                for (int k = 0; k < Tc; k++) {
-                    buf[i][j][k] = G(0);
-                }
-            }
-        }
-    }
-    // Reset weight buffer
-    void w_buf_reset(int K, W buf[][Tm][K_max][K_max]) {
-        for (int i = 0; i < Tn; i++) {
-            for (int j = 0; j < Tm; j++) {
-                for (int k = 0; k < K; k++) {
-                    for (int l = 0; l < K; l++) {
-                        buf[i][j][k][l] = W(0);
-                    }
-                }
-            }
-        }
-    }
-    // Reset bias buffer
-    void b_buf_reset(W buf[]) {
-        for (int i = 0; i < Tm; i++) {
-            buf[i] = W(0);
-        }
-    }
 
     ////-----------------------------Accelerator Functions---------------------------------------////
     // Load bias data
-    void b_buf_load(W buf[], ap_fixed<32,26> *layer_bias, int bias_offset, int m) {
+    void b_buf_load(W buf[], ap_fixed<32,26> *layer_bias, int bias_offset, int m)
+    {
         for (int i = 0; i < Tm; i++) {
             buf[i].range(15,0) = (*(layer_bias + bias_offset + i + m)).range(15,0);
 //            cout << "Read bias location: " << bias_offset + i + m << "  Read bias data: " << buf[i] << endl;
@@ -118,13 +90,16 @@ public:
             Itf* out_data,
             int in_offset, int n, int r, int c, int S, int K, int P, int R_IN, int C_IN, int N ) {
 
-             if(inport == 0) {
-                    in_buf_load_axi(buf, i_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
-                    cout << "input data with i_data!" << endl;
-              } else {
-                    in_buf_load_bram(buf, out_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
-                    cout << "input data with out_data!" << endl;
-              }
+    		if(inport == 0)
+    		{
+    			in_buf_load_axi(buf, i_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
+				cout << "input data with i_data!" << endl;
+    		}
+    		else
+    		{
+				in_buf_load_bram(buf, out_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
+				cout << "input data with out_data!" << endl;
+            }
     }
 
     // Load weight squeezed in the N dimension
@@ -152,27 +127,68 @@ public:
     }
 
     // Load weight squeezed in the M dimension
-    void w_buf_load_512_tm(W buf[][Tm][K_max][K_max],
-                        Itf *layer_weights,
-                        int weight_offset,
-                        int n, int m, int K, int N, int M)
+//    void w_buf_load_512_tm(	ap_fixed<16,10> buf[][Tm][K_max][K_max],
+//							ap_int<512> *layer_weights,
+//							int weight_offset,
+//							int n,
+//							int m,
+//							int K,
+//							int N,
+//							int M)
+//    {
+//    	ap_int<512> w_tmp = 0;
+//        for (int k1 = 0; k1 < K; k1++)
+//        {
+//            for (int k2 = 0; k2 < K; k2++)
+//            {
+//                for (int j = 0; j < Tn && j < N; j++)
+//                { // Tn smaller than 32
+//#pragma HLS PIPELINE
+//                    for (int i = 0; i < Tm; i+=32)
+//                    { // Tm greater than 32
+//                    	w_tmp = *(layer_weights + weight_offset + ((j + n)/32)* M * K * K + (i + m) * K * K + k1*K + k2);
+//                        for (int wr = 0; wr < 32; wr++)
+//                        {
+//#pragma HLS UNROLL
+//                            buf[j][i+wr][k1][k2].range(15,0) = w_tmp.range((wr%32 + 1) * 16 - 1, ((wr)%32) * 16);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+    void w_buf_load_512_tm(ap_fixed<16,10> buf[][Tm][K_max][K_max],
+    					   ap_int<512> *layer_weights,
+						   int weight_offset,
+						   int n,
+						   int m,
+						   int K,
+						   int N,
+						   int M)
     {
-        Itf w_tmp = 0;
-        for (int k1 = 0; k1 < K; k1++) {
-            for (int k2 = 0; k2 < K; k2++) {
-                for (int j = 0; j < Tn && j < N; j++) { // Tn smaller than 32
+        ap_int<512> w_tmp = 0;
+        for (int k1 = 0; k1 < K; k1++)
+        {
+            for (int k2 = 0; k2 < K; k2++)
+            {
+                for (int j = 0; j < Tn; j++)
+                { // Tn smaller than 32
 #pragma HLS PIPELINE
-                    for (int i = 0; i < Tm; i+=32) { // Tm greater than 32
-                    	w_tmp = *(layer_weights + weight_offset + ((j + n)/32)* M * K * K + (i + m) * K * K + k1*K + k2);
-                        for (int wr = 0; wr < 32; wr++) {
+                    for (int i = 0; i < Tm; i+=32)
+                    { // Tm greater than 32
+                    	w_tmp = *(layer_weights + weight_offset + ((i + m)/32)* N * K * K + ((j + n)) * K * K + k1*K + k2);
+                        for (int wr = 0; wr < 32; wr++)
+                        {
 #pragma HLS UNROLL
-                            buf[j][i+wr][k1][k2].range(15,0) = w_tmp.range((wr%32 + 1) * 16 - 1, ((wr)%32) * 16);
+                            buf[j][i+wr][k1][k2].range(15,0) = w_tmp.range((wr + 1) * 16 - 1, wr * 16);
                         }
                     }
                 }
             }
         }
     }
+
 
 // Convolution computation kernel Tm, Tn based
     void conv_engine(T in_buf[][(Tr - 1) * S_max + K_max][(Tc - 1) * S_max + K_max], W w_buf[][Tm][K_max][K_max],
@@ -189,13 +205,11 @@ public:
                                 for (int tn = 0; tn < Tn; tn++) {
 #pragma HLS UNROLL
                                     if (i == 0 && j == 0 && tn == 0 && n == 0)
-                                        out_buf[tm][tr][tc] = b_buf[tm] + w_buf[tn][tm][i + w_offset][j] *
-                                                                          in_buf[tn][S * (tr) + i + i_offset][S * (tc) +
-                                                                                                              j];
+                                        out_buf[tm][tr][tc] =b_buf[tm] + w_buf[tn][tm][i + w_offset][j] *
+                                                             in_buf[tn][S * (tr) + i + i_offset][S * (tc) + j];
                                     else
                                         out_buf[tm][tr][tc] = out_buf[tm][tr][tc] + w_buf[tn][tm][i + w_offset][j] *
-                                                                                    in_buf[tn][S * (tr) + i + i_offset][
-                                                                                            S * (tc) + j];
+                                                             in_buf[tn][S * (tr) + i + i_offset][S * (tc) + j];
                                 }
                             }
                         }
@@ -298,30 +312,28 @@ public:
                 {
                     for (int n = 0; n < N + Tn; n += Tn)
                     {
-                    	if (n % 2 == 0){
+                    	//if (n % 2 == 0)
+                    	//{
                     		//--------------------------Load input B W D in ping-pong manner-------------------------//
                     		b_buf_load(b_buf_0, layer_bias, bias_offset, m);
                     		w_buf_load_512_tm(w_buf_0, i_weight, weight_offset, n, m, K, N, M);
                     		in_buf_load(inport, in_buf_0, i_data, out_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
-                    		//------------------------------compute buffered data -----------------------------------//
-                    		conv_engine(in_buf_1, w_buf_1, b_buf_1, out_buf_0, S, n-Tn, N, r, c, K, R_OUT, C_OUT, 0, 0);
-                    	} else {
+                    		//conv_engine(in_buf_0, w_buf_0, b_buf_0, out_buf_0, S, n-Tn, N, r, c, K, R_OUT, C_OUT, 0, 0);
+                    		conv_engine(in_buf_0, w_buf_0, b_buf_0, out_buf_0, S, n, N, r, c, K, R_OUT, C_OUT, 0, 0);
+                    		//}
+                    	//else
+                    	//{
                             //--------------------------Load input B W D in ping-pong manner-------------------------//
-                            b_buf_load(b_buf_1, layer_bias, bias_offset, m);
-                            w_buf_load_512_tm(w_buf_1, i_weight, weight_offset, n, m, K, N, M);
-                            in_buf_load(inport, in_buf_1, i_data, out_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
-                            //------------------------------compute buffered data -----------------------------------//
-                            conv_engine(in_buf_0, w_buf_0, b_buf_0, out_buf_0, S, n-Tn, N, r, c, K, R_OUT, C_OUT, 0, 0);
-                    	}
-//                        com_ptr = !com_ptr;
+//                            b_buf_load(b_buf_1, layer_bias, bias_offset, m);
+//                            w_buf_load_512_tm(w_buf_1, i_weight, weight_offset, n, m, K, N, M);
+//                            in_buf_load(inport, in_buf_1, i_data, out_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
+//                            conv_engine(in_buf_0, w_buf_0, b_buf_0, out_buf_0, S, n-Tn, N, r, c, K, R_OUT, C_OUT, 0, 0);
+//                    	}
                 }
-                //---------------------------transfer output data----------------------------------------//
                 output_res_512(out_buf_0,out_data,out_offset, N, m, r, c, N, M, R_OUT, C_OUT, act);
             }
         }
     }
-
-
     };
 
 #endif
