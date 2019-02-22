@@ -21,8 +21,9 @@ public:
 	ap_uint<32> lnum_list[16];
 	ap_uint<32> config_list[16*16];
 	ap_fixed<32,26>* bias;
+	ap_uint<32> param_list[528];
 
-	conv_validate(int layer_num, int num_input,int num_output,int kernel_size,int stride,int padding, int inputfeature_size);
+	conv_validate(int layer_num, int num_input,int num_output,int kernel_size,int stride,int padding, int inputfeature_size, int inport);
 	void print_weight(void);
 	void print_feature_in(void);
 	void print_bias(void);

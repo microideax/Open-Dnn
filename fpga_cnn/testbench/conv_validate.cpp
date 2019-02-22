@@ -5,7 +5,7 @@
 using namespace std;
 
 
-conv_validate::conv_validate(int layer_num,int num_input,int num_output,int kernel_size,int stride,int padding, int inputfeature_size)
+conv_validate::conv_validate(int layer_num,int num_input,int num_output,int kernel_size,int stride,int padding, int inputfeature_size, int inport)
 {
 	int i,j,k,x,y,z;
 	this->layer_num = layer_num;
@@ -17,6 +17,13 @@ conv_validate::conv_validate(int layer_num,int num_input,int num_output,int kern
 	this->kernel_size = kernel_size;
 	outputfeature_size = (inputfeature_size + 2*padding - kernel_size)/stride + 1;
 	act = 1;
+
+//	for(int i =0; i < 16; i++){
+//		this->lnum_list[0] = 0;
+//	}
+	for(i = 0; i < 528; i++){
+		this->param_list[i] = 0;
+	}
 
 	this->lnum_list[0] = layer_num;
 
@@ -34,23 +41,33 @@ conv_validate::conv_validate(int layer_num,int num_input,int num_output,int kern
 	this->config_list[11] = 0;
 	this->config_list[12] = 0;
 	this->config_list[13] = 0;
-	this->config_list[14] = 0;
+	this->config_list[14] = inport;
 	this->config_list[15] = 0;
 
-	weight = new ap_int<512>[(int)(ceil((double)num_input/32))*num_output*kernel_size*kernel_size];
+	// initialize param_list
+	for(i = 0; i < 16; i++)
+	{
+		this->param_list[i] = this->lnum_list[i];
+	}
+	for(i = 16; i < 32; i++)
+	{
+		this->param_list[i] = this->config_list[i - 16];
+	}
+	weight = new ap_int<512>[(int)(ceil((double)num_output/32))*num_input*kernel_size*kernel_size];
 	input_feature = new ap_int<512>[inputfeature_size * inputfeature_size * (int)(ceil(((double)num_input)/32))];
 	bias = new ap_fixed<32,26>[num_output];
-	output_feature = new ap_int<512>[outputfeature_size * outputfeature_size * (int)(ceil(((double)num_output)/32))];
+//	output_feature = new ap_int<512>[outputfeature_size * outputfeature_size * (int)(ceil(((double)num_output)/32))];
+	output_feature = new ap_int<512>[2048];
 	output_feature_software = new ap_int<512>[outputfeature_size * outputfeature_size * (int)(ceil(((double)num_output)/32))];
 
-	for(i = 0 ; i < (num_input/32) * num_output * kernel_size * kernel_size; i++)
+	for(i = 0 ; i < (num_output/32) * num_input * kernel_size * kernel_size; i++)
 		for(j = 0 ; j < 32; j++)
 			weight[i].range(15+16*j,16*j) = rand()%10; //rand()%2 * 64;
-	for(i = (num_input/32) * num_output * kernel_size * kernel_size; i < ((int)(ceil((double)num_input/32))) * num_output * kernel_size * kernel_size;i++)
+	for(i = (num_output/32) * num_input * kernel_size * kernel_size; i < ((int)(ceil((double)num_output/32))) * num_input * kernel_size * kernel_size;i++)
 	{
-		for(j = 0 ; j < num_input % 32; j++)
+		for(j = 0 ; j < num_output % 32; j++)
 			weight[i].range(15+16*j,16*j) = rand()%10; //rand()%2 * 64;
-		for(j = num_input % 32 ; j < 32; j++)
+		for(j = num_output % 32 ; j < 32; j++)
 			weight[i].range(15+16*j,16*j) = 0;
 	}
 
@@ -88,6 +105,7 @@ void conv_validate :: print_feature_in(void)
 	}
 }
 
+
 void conv_validate :: print_weight(void)
 {
 	int i,j,k;
@@ -100,7 +118,6 @@ void conv_validate :: print_weight(void)
 		cout << endl;
 	}
 }
-
 
 void conv_validate :: print_bias(void)
 {
@@ -123,7 +140,6 @@ void conv_validate :: print_feature_out(void)
 		cout << endl;
 	}
 }
-
 
 void conv_validate :: software_conv_process(void)       //assume padding = 2
 {
@@ -181,7 +197,8 @@ void conv_validate :: software_conv_process(void)       //assume padding = 2
 						{
 
 							temp += (int)(temp_array[j * (inputfeature_size+2*padding ) * (inputfeature_size+2*padding ) + x * (inputfeature_size+2*padding) + y + (k*(inputfeature_size+2*padding) + z)])
-									*(int)(weight[(j/32)*num_output*kernel_size*kernel_size +i*kernel_size*kernel_size + k*kernel_size + z].range(15+16*(j%32),16*(j%32)))/64;
+									//*(int)(weight[(j/32)*num_output*kernel_size*kernel_size +i*kernel_size*kernel_size + k*kernel_size + z].range(15+16*(j%32),16*(j%32)))/64;
+								   *(int)(weight[(i/32)*num_input*kernel_size*kernel_size +j*kernel_size*kernel_size + k*kernel_size + z].range(15+16*(i%32),16*(i%32)))/64;
 
 //							cout << "temp = " << temp
 //							      <<"feature = " << (int)(temp_array[x * (inputfeature_size+2*padding) + y + (k*(inputfeature_size+2*padding) + z)])
@@ -206,7 +223,6 @@ void conv_validate :: software_conv_process(void)       //assume padding = 2
 }
 
 
-
 void conv_validate :: print_feature_out_softeare(void)
 {
 	int i,j;
@@ -225,8 +241,3 @@ void conv_validate :: test_fun(void)
 	cout << "class test : "<< outputfeature_size << endl;
 	cout << (int)(ceil((double)num_input/32)) << endl;
 }
-
-
-
-
-
