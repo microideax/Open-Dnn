@@ -27,7 +27,7 @@ int main()
 	conv_validate conv_test(para_list);
 
 
-	sub_net_0	(
+	sub_net_1(
 					para_list,						//ap_uint<32> param_port[528],
 					conv_test.bias,					//ap_fixed<32,26> bias_in[1024],
 					conv_test.weight,				//data_type_itf weight_in[2048],
