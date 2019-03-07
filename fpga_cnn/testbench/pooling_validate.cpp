@@ -1,7 +1,10 @@
 #include <iostream>
+#include <math.h>
+#include <stdlib.h>
+#include "pooling_validate.h"
 using namespace std;
 
-pooling_validate :: pooling_validate(int num_input,int stride,int kernel_size,int inputfeature_size,int act)
+pooling_validate::pooling_validate(int num_input,int stride,int kernel_size,int inputfeature_size,int act)
 {
 	
 	int i,j,k;
@@ -31,24 +34,26 @@ pooling_validate :: pooling_validate(int num_input,int stride,int kernel_size,in
 	
 	input_feature = new ap_int<512>[inputfeature_size * inputfeature_size * (int)(ceil(((double)num_input)/32))];
 	output_feature = new ap_int<512>[outputfeature_size * outputfeature_size * (int)(ceil(((double)num_input)/32))];
-	output_feature_softeare = new ap_int<512>[outputfeature_size * outputfeature_size * (int)(ceil(((double)num_input)/32))];
+	output_feature_software = new ap_int<512>[outputfeature_size * outputfeature_size * (int)(ceil(((double)num_input)/32))];
 	
 	
 	for(i = 0 ; i < num_input; i++)
 		for(j = 0 ; j < inputfeature_size ;j++)
 			for(k = 0 ; k < inputfeature_size; k++)
-				input_feature[i/32*inputfeature_size*inputfeature_size + j*inputfeature_size + k].range(i%32) = rand()%10;
+//				input_feature[i/32*inputfeature_size*inputfeature_size + j*inputfeature_size + k].range(i%32) = rand()%10;
+				;
 }
 
 
-void pooling_validate :: print_feature_in(void)
-{
-	int i,j,k;
-	for(i = 0 ; i < num_input; i++)
-		for(j = 0 ; j < inputfeature_size ; j++)
-			for(k = 0 ; k < inputfeature_size; k++)				
-			
-}
+//void pooling_validate::print_feature_in(void)
+//{
+//	int i,j,k;
+//	for(i = 0 ; i < num_input; i++)
+//		for(j = 0 ; j < inputfeature_size ; j++)
+//			for(k = 0 ; k < inputfeature_size; k++)
+//				;
+//
+//}
 
 
 

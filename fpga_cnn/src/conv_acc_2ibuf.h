@@ -11,16 +11,18 @@ using namespace std;
 template<typename Itf, typename Tparam, typename T, typename W, typename G, int Tm, int Tn, int Tr, int Tc, int S_max, int K_max, int IBUF_t, int WBUF_t, int OBUF_t>
 class conv_acc {
 
-private:
-    int conv_layer_number;
+
 
 public:
-    conv_acc() : conv_layer_number(0) { conv_layer_number = 0; };
+    conv_acc() {;}
 
 
     ////-----------------------------Accelerator Functions---------------------------------------////
     // Load bias data
-    void b_buf_load(W buf[], ap_fixed<32,26> *layer_bias, int bias_offset, int m)
+    void b_buf_load(W buf[], 
+                    ap_fixed<32,26> *layer_bias, 
+                    int bias_offset, 
+                    int m)
     {
         for (int i = 0; i < Tm; i++) {
             buf[i].range(15,0) = (*(layer_bias + bias_offset + i + m)).range(15,0);
@@ -31,9 +33,19 @@ public:
     void in_buf_load_axi(
             T buf[][(Tr - 1) * S_max + K_max][(Tc - 1) * S_max + K_max],
             Itf* i_data,
-            int in_offset, int n, int r, int c, int S, int K, int P, int R_IN, int C_IN, int N ) {
+            int in_offset, 
+            int n, 
+            int r, 
+            int c, 
+            int S, 
+            int K, 
+            int P, 
+            int R_IN, 
+            int C_IN, 
+            int N ) {
         Itf data_tmp = 0;
         // valid data portion
+        int i = 0;
         for (int j = r * S - P; j < (r + Tr - 1) * S + K - P ; j++) {//
             for (int k = c * S - P; k < (c + Tc -1) * S + K - P; k++) {
 #pragma HLS PIPELINE
@@ -127,37 +139,6 @@ public:
     }
 
     // Load weight squeezed in the M dimension
-//    void w_buf_load_512_tm(	ap_fixed<16,10> buf[][Tm][K_max][K_max],
-//							ap_int<512> *layer_weights,
-//							int weight_offset,
-//							int n,
-//							int m,
-//							int K,
-//							int N,
-//							int M)
-//    {
-//    	ap_int<512> w_tmp = 0;
-//        for (int k1 = 0; k1 < K; k1++)
-//        {
-//            for (int k2 = 0; k2 < K; k2++)
-//            {
-//                for (int j = 0; j < Tn && j < N; j++)
-//                { // Tn smaller than 32
-//#pragma HLS PIPELINE
-//                    for (int i = 0; i < Tm; i+=32)
-//                    { // Tm greater than 32
-//                    	w_tmp = *(layer_weights + weight_offset + ((j + n)/32)* M * K * K + (i + m) * K * K + k1*K + k2);
-//                        for (int wr = 0; wr < 32; wr++)
-//                        {
-//#pragma HLS UNROLL
-//                            buf[j][i+wr][k1][k2].range(15,0) = w_tmp.range((wr%32 + 1) * 16 - 1, ((wr)%32) * 16);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     void w_buf_load_512_tm(ap_fixed<16,10> buf[][Tm][K_max][K_max],
     					   ap_int<512> *layer_weights,
 						   int weight_offset,
@@ -191,9 +172,20 @@ public:
 
 
 // Convolution computation kernel Tm, Tn based
-    void conv_engine(T in_buf[][(Tr - 1) * S_max + K_max][(Tc - 1) * S_max + K_max], W w_buf[][Tm][K_max][K_max],
-                     W b_buf[], G out_buf[][Tr][Tc], int S, int n, int N, int r, int c, int K, int R_OUT, int C_OUT,
-                     int w_offset, int i_offset) {
+    void conv_engine(T in_buf[][(Tr - 1) * S_max + K_max][(Tc - 1) * S_max + K_max], 
+                     W w_buf[][Tm][K_max][K_max],
+                     W b_buf[], 
+                     G out_buf[][Tr][Tc], 
+                     int S, 
+                     int n, 
+                     int N, 
+                     int r, 
+                     int c, 
+                     int K, 
+                     int R_OUT, 
+                     int C_OUT,
+                     int w_offset, 
+                     int i_offset) {
         if (n >= 0 && n - Tn < N) {
             for (int i = 0; i < K; i++) {
                 for (int j = 0; j < K; j++) {
@@ -223,20 +215,26 @@ public:
     void output_res_512(ap_fixed<16,10> out_buf[][Tr][Tc],
     					ap_int<512>*	out_data,
                         int 			out_offset,
-						int n, int m, int r, int c, int N, int M,
-                        int R_OUT, int C_OUT, bool act)
-    {
+						int n, 
+                        int m, 
+                        int r, 
+                        int c, 
+                        int N, 
+                        int M,
+                        int R_OUT, 
+                        int C_OUT, 
+                        bool act) {
         ap_int<512>     out_tmp = 0;
         ap_fixed<16,10> tmp = 0;
         ap_fixed<16,10> tmp_outbuf = 0;
         if (n >= N - Tn)
         {
-            for (int j = r; (j < r + Tr) && (j < R_OUT); j++)
-            {
-                for (int k = c; (k < c + Tc) && (k < C_OUT); k++)
-                {
-                	for (int wr = 0; wr < Tm && wr < M; wr += 32) // Tm should always greater than 32, otherwise this will not work
-                	{
+        	for (int wr = 0; wr < Tm && wr < M; wr += 32) // Tm should always greater than 32, otherwise this will not work
+        	{
+        		for (int j = r; (j < r + Tr) && (j < R_OUT); j++)
+        		{
+        			for (int k = c; (k < c + Tc) && (k < C_OUT); k++)
+        			{
 #pragma HLS PIPELINE
                 		for (int wr_d = 0; wr_d < 32; wr_d++)
                         {
@@ -272,7 +270,7 @@ public:
             int S,            // stride size
             int P,            // padding size
             bool act,         // activation function bit (1-- with act, 0--without act)
-            bool inport,
+            int inport,
             int weight_offset,
             int bias_offset,
             int in_offset,
@@ -286,9 +284,6 @@ public:
         T in_buf_0[Tn][(Tr - 1) * S_max + K_max][(Tc - 1) * S_max + K_max];
         W w_buf_0[Tn][Tm][K_max][K_max];
         W b_buf_0[Tm];
-        T in_buf_1[Tn][(Tr - 1) * S_max + K_max][(Tc - 1) * S_max + K_max];
-        W w_buf_1[Tn][Tm][K_max][K_max];
-        W b_buf_1[Tm];
         G out_buf_0[Tm][Tr][Tc];
 
         bool com_ptr = 0;
@@ -297,10 +292,6 @@ public:
 #pragma HLS ARRAY_PARTITION variable = w_buf_0 complete dim = 1
 #pragma HLS ARRAY_PARTITION variable = w_buf_0 complete dim = 2
 #pragma HLS ARRAY_PARTITION variable = b_buf_0 complete
-#pragma HLS ARRAY_PARTITION variable = in_buf_1 complete dim = 1
-#pragma HLS ARRAY_PARTITION variable = w_buf_1 complete dim = 1
-#pragma HLS ARRAY_PARTITION variable = w_buf_1 complete dim = 2
-#pragma HLS ARRAY_PARTITION variable = b_buf_1 complete
 #pragma HLS ARRAY_PARTITION variable = out_buf_0 complete dim = 1
 
         //--------------------------Initial data load ---------------------------------------------//
@@ -310,32 +301,92 @@ public:
             {
                 for (int m = 0; m < M; m += Tm)
                 {
-                    for (int n = 0; n < N + Tn; n += Tn)
+                    for (int n = 0; n < N; n += Tn)
                     {
-                    	//if (n % 2 == 0)
-                    	//{
-                    		//--------------------------Load input B W D in ping-pong manner-------------------------//
-                    		b_buf_load(b_buf_0, layer_bias, bias_offset, m);
-                    		w_buf_load_512_tm(w_buf_0, i_weight, weight_offset, n, m, K, N, M);
-                    		in_buf_load(inport, in_buf_0, i_data, out_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
-                    		//conv_engine(in_buf_0, w_buf_0, b_buf_0, out_buf_0, S, n-Tn, N, r, c, K, R_OUT, C_OUT, 0, 0);
-                    		conv_engine(in_buf_0, w_buf_0, b_buf_0, out_buf_0, S, n, N, r, c, K, R_OUT, C_OUT, 0, 0);
-                    		//}
-                    	//else
-                    	//{
-                            //--------------------------Load input B W D in ping-pong manner-------------------------//
-//                            b_buf_load(b_buf_1, layer_bias, bias_offset, m);
-//                            w_buf_load_512_tm(w_buf_1, i_weight, weight_offset, n, m, K, N, M);
-//                            in_buf_load(inport, in_buf_1, i_data, out_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
-//                            conv_engine(in_buf_0, w_buf_0, b_buf_0, out_buf_0, S, n-Tn, N, r, c, K, R_OUT, C_OUT, 0, 0);
-//                    	}
+                    	b_buf_load(b_buf_0, layer_bias, bias_offset, m);
+                    	w_buf_load_512_tm(w_buf_0, i_weight, weight_offset, n, m, K, N, M);
+                    	in_buf_load(inport, in_buf_0, i_data, out_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
+                    	conv_engine(in_buf_0, w_buf_0, b_buf_0, out_buf_0, S, n, N, r, c, K, R_OUT, C_OUT, 0, 0);
+                    }
+                    output_res_512(out_buf_0,out_data,out_offset, N, m, r, c, N, M, R_OUT, C_OUT, act);
                 }
-                output_res_512(out_buf_0,out_data,out_offset, N, m, r, c, N, M, R_OUT, C_OUT, act);
             }
         }
-    }
     };
 
+    void conv_layer_acc_2ibuf(
+                int N,            //input feature number
+                int K,            //input kernel size
+                int M,            // output feature number
+                int R_IN,         // input Row
+                int C_IN,         // input column
+                int R_OUT,        // output Row
+                int C_OUT,        // output column
+                int S,            // stride size
+                int P,            // padding size
+                bool act,         // activation function bit (1-- with act, 0--without act)
+                int inport,
+                int weight_offset,
+                int bias_offset,
+                int in_offset,
+                int out_offset,
+    			ap_fixed<32,26> *layer_bias,
+                Itf *i_weight,
+                Itf *i_data,
+                Itf *out_data ) { // out[M][R][C]
+
+            /***************local data buffer groups******************************/
+            T in_buf_0[Tn][(Tr - 1) * S_max + K_max][(Tc - 1) * S_max + K_max];
+            W w_buf_0[Tn][Tm][K_max][K_max];
+            W b_buf_0[Tm];
+            T in_buf_1[Tn][(Tr - 1) * S_max + K_max][(Tc - 1) * S_max + K_max];
+            W w_buf_1[Tn][Tm][K_max][K_max];
+            W b_buf_1[Tm];
+            G out_buf_0[Tm][Tr][Tc];
+
+            bool com_ptr = 0;
+
+    #pragma HLS ARRAY_PARTITION variable = in_buf_0 complete dim = 1
+    #pragma HLS ARRAY_PARTITION variable = w_buf_0 complete dim = 1
+    #pragma HLS ARRAY_PARTITION variable = w_buf_0 complete dim = 2
+    #pragma HLS ARRAY_PARTITION variable = b_buf_0 complete
+    #pragma HLS ARRAY_PARTITION variable = in_buf_1 complete dim = 1
+    #pragma HLS ARRAY_PARTITION variable = w_buf_1 complete dim = 1
+    #pragma HLS ARRAY_PARTITION variable = w_buf_1 complete dim = 2
+    #pragma HLS ARRAY_PARTITION variable = b_buf_1 complete
+    #pragma HLS ARRAY_PARTITION variable = out_buf_0 complete dim = 1
+
+            //--------------------------Initial data load ---------------------------------------------//
+            for (int r = 0; r < R_OUT; r += Tr)
+            {
+                for (int c = 0; c < C_OUT; c += Tc)
+                {
+                    for (int m = 0; m < M; m += Tm)
+                    {
+                        for (int n = 0; n < N + Tn; n += Tn)
+                        {
+                        	if (n % 2 == 0)
+                        	{
+                        		//--------------------------Load input B W D in ping-pong manner-------------------------//
+                        		b_buf_load(b_buf_0, layer_bias, bias_offset, m);
+                        		w_buf_load_512_tm(w_buf_0, i_weight, weight_offset, n, m, K, N, M);
+                        		in_buf_load(inport, in_buf_0, i_data, out_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
+                        		conv_engine(in_buf_0, w_buf_0, b_buf_0, out_buf_0, S, n-Tn, N, r, c, K, R_OUT, C_OUT, 0, 0);
+                        	}
+                        	else
+                        	{
+                                //--------------------------Load input B W D in ping-pong manner-------------------------//
+                                b_buf_load(b_buf_1, layer_bias, bias_offset, m);
+                                w_buf_load_512_tm(w_buf_1, i_weight, weight_offset, n, m, K, N, M);
+                                in_buf_load(inport, in_buf_1, i_data, out_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
+                                conv_engine(in_buf_0, w_buf_0, b_buf_0, out_buf_0, S, n-Tn, N, r, c, K, R_OUT, C_OUT, 0, 0);
+                        	}
+                    }
+                    output_res_512(out_buf_0,out_data,out_offset, N, m, r, c, N, M, R_OUT, C_OUT, act);
+                }
+            }
+        }
+    };
 #endif
 
 };

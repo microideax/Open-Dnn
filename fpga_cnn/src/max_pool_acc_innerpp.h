@@ -91,22 +91,23 @@ public:
         pG tmp = 0;
         pG tmp_outbuf = 0;
         if (n >= 0) {
-
             for (int j = r; j < r + pTr && j < R; j++)
             {
                 for (int k = c; k < c + pTc && k < C; k++)
                 {
-                    for (int i = 0; i < pTn && i < N - n; i += 32)
-                    {
 #pragma HLS PIPELINE
-//                        ex_out_tmp = *(out_data + ((i + n)/32)*R*C + j*C + k);
-                        for (int wr = 0; wr < (pTn<32?pTn:32); wr++)
-                        {
+                    for (int i = 0; i < pTn; i += 32)
+                    {
+                    	if(i < N - n)
+                    	{
+                    		for (int wr = 0; wr < (pTn<32?pTn:32); wr++)
+                    		{
 #pragma HLS UNROLL
-                            tmp_outbuf = RELU(out_buf[i + wr][j - r][k - c]);
-                            out_tmp.range(16 * (wr + 1) - 1, 16 * wr) = tmp_outbuf.range(15,0);
-                        }
-                        *(out_data + out_offset + ((i + n)/32)*R*C + j*C + k) = out_tmp;
+                    			tmp_outbuf = RELU(out_buf[i + wr][j - r][k - c]);
+                    			out_tmp.range(16 * (wr + 1) - 1, 16 * wr) = tmp_outbuf.range(15,0);
+                    		}
+                    		*(out_data + out_offset + ((i + n)/32)*R*C + j*C + k) = out_tmp;
+                    	}
                     }
                 }
             }
