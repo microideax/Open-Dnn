@@ -365,13 +365,13 @@ public:
                     {
                         for (int n = 0; n < N + Tn; n += Tn)
                         {
-                        	if (n % 2 == 0)
+                        	if (n % (2*Tn) == 0)
                         	{
                         		//--------------------------Load input B W D in ping-pong manner-------------------------//
                         		b_buf_load(b_buf_0, layer_bias, bias_offset, m);
                         		w_buf_load_512_tm(w_buf_0, i_weight, weight_offset, n, m, K, N, M);
                         		in_buf_load(inport, in_buf_0, i_data, out_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
-                        		conv_engine(in_buf_0, w_buf_0, b_buf_0, out_buf_0, S, n-Tn, N, r, c, K, R_OUT, C_OUT, 0, 0);
+                        		conv_engine(in_buf_1, w_buf_1, b_buf_1, out_buf_0, S, n-Tn, N, r, c, K, R_OUT, C_OUT, 0, 0);
                         	}
                         	else
                         	{
