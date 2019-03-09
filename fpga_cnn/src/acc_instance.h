@@ -33,7 +33,7 @@ void conv_layer_acc_0(
 				)
 {
 #pragma HLS INTERFACE m_axi  port=i_data
-#pragma HLS INTERFACE bram port=out_data
+//#pragma HLS INTERFACE bram port=out_data
 	convAcc0.conv_layer_acc_mbuf(N, K, M, R_IN, C_IN, C_OUT, R_OUT, S, P, act, inport, weight_offset, bias_offset, in_offset, out_offset,layer_bias,i_weight,i_data,out_data);
 }
 
@@ -61,8 +61,8 @@ void conv_layer_acc_1(
 					data_type_itf* out_data
 				)
 {
-#pragma HLS INTERFACE bram port=i_data
-#pragma HLS INTERFACE bram port=out_data
+//#pragma HLS INTERFACE bram port=i_data
+//#pragma HLS INTERFACE bram port=out_data
 	convAcc1.conv_layer_acc_mbuf(N, K, M, R_IN, C_IN, C_OUT, R_OUT, S, P, act, inport, weight_offset, bias_offset, in_offset, out_offset,layer_bias,i_weight,i_data,out_data);
 }
 

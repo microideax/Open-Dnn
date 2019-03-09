@@ -44,9 +44,9 @@ void sub_net_0(
 #pragma HLS INTERFACE s_axilite port=data_in_0 bundle=CRTL_BUS
 #pragma HLS INTERFACE m_axi port=data_in_0 offset=slave depth=65536 	bundle=DATA_IN
 
-#pragma HLS INTERFACE bram port=data_out_0
-#pragma HLS INTERFACE bram port=data_in_1
-#pragma HLS INTERFACE bram port=data_out_1
+#pragma HLS INTERFACE ap_memory port=data_out_0
+#pragma HLS INTERFACE ap_memory port=data_in_1
+#pragma HLS INTERFACE ap_memory port=data_out_1
 
 
 	int acc0_mem_inport_offset = 0;
@@ -98,8 +98,8 @@ void sub_net_1(
 #pragma HLS INTERFACE s_axilite port=data_in_0 bundle=CRTL_BUS
 #pragma HLS INTERFACE m_axi port=data_in_0 offset=slave depth=2048 bundle=DATA_IN
 
-#pragma HLS INTERFACE bram port=data_out_0
-#pragma HLS INTERFACE bram port=data_in_1
+#pragma HLS INTERFACE ap_memory port=data_out_0
+#pragma HLS INTERFACE ap_memory port=data_in_1
 #pragma HLS INTERFACE bram port=data_out_1
 
     int acc0_mem_inport_offset = 0;
