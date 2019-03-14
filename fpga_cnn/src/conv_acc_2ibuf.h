@@ -26,7 +26,7 @@ public:
     {
         for (int i = 0; i < Tm; i++) {
             buf[i].range(15,0) = (*(layer_bias + bias_offset + i + m)).range(15,0);
-//            cout << "Read bias location: " << bias_offset + i + m << "  Read bias data: " << buf[i] << endl;
+            //cout << "Read bias location: " << bias_offset + i + m << "  Read bias data: " << buf[i].range(15,0)<< endl;
         }
     }
     // Tn << 32 && N << 32
@@ -45,7 +45,6 @@ public:
             int N ) {
         Itf data_tmp = 0;
         // valid data portion
-        int i = 0;
         for (int j = r * S - P; j < (r + Tr - 1) * S + K - P ; j++) {//
             for (int k = c * S - P; k < (c + Tc -1) * S + K - P; k++) {
 #pragma HLS PIPELINE

@@ -32,10 +32,37 @@ conv_validate::conv_validate(ap_uint<32>* param_list)
 		for(j = 0 ; j < 16 * 16;j++)
 			input_feature[j].range(15+16*i,16*i) = 64;
 	}
+
+
+
+
 	for(i = 0 ; i < 9;i++)
 	{
-		weight[i].range(15,0) = 16;
+		weight[i].range(15,0) = 64;
 	}
+
+
+	for(i = 0 ; i < 9;i++)
+	{
+		weight[i].range(16+15,16+0) = 0;
+	}
+
+	for(i = 0 ; i < 9;i++)
+	{
+		weight[i].range(16*2+15,16*2+0) = 0;
+	}
+
+
+
+
+//	for(j = 0 ; j < 8; j++)
+//		for(i = 0 ; i < 72;i++)
+//		{
+//			weight[i].range(15+16*j,0+16*j) = 64;
+//		}
+
+
+
 //	for(i = 18 ; i < 27;i++)
 //	{
 //		weight[i].range(15,0) = 64;
