@@ -33,8 +33,8 @@ void conv_layer_acc_0(
 				)
 {
 #pragma HLS INTERFACE m_axi  port=i_data
-//#pragma HLS INTERFACE bram port=out_data
-	convAcc0.conv_layer_acc_mbuf(N, K, M, R_IN, C_IN, C_OUT, R_OUT, S, P, act, inport, weight_offset, bias_offset, in_offset, out_offset,layer_bias,i_weight,i_data,out_data);
+#pragma HLS INTERFACE bram   port=out_data
+	convAcc0.conv_layer_acc_2ibuf(N, K, M, R_IN, C_IN, C_OUT, R_OUT, S, P, act, inport, weight_offset, bias_offset, in_offset, out_offset,layer_bias,i_weight,i_data,out_data);
 }
 
 
@@ -61,9 +61,9 @@ void conv_layer_acc_1(
 					data_type_itf* out_data
 				)
 {
-//#pragma HLS INTERFACE bram port=i_data
-//#pragma HLS INTERFACE bram port=out_data
-	convAcc1.conv_layer_acc_mbuf(N, K, M, R_IN, C_IN, C_OUT, R_OUT, S, P, act, inport, weight_offset, bias_offset, in_offset, out_offset,layer_bias,i_weight,i_data,out_data);
+#pragma HLS INTERFACE bram port=i_data
+#pragma HLS INTERFACE bram port=out_data
+	convAcc1.conv_layer_acc_2ibuf(N, K, M, R_IN, C_IN, C_OUT, R_OUT, S, P, act, inport, weight_offset, bias_offset, in_offset, out_offset,layer_bias,i_weight,i_data,out_data);
 }
 
 max_pool_acc< data_type_itf, data_type, data_type_w, data_type_o, 32, 16, 16, 2, 3> maxPoolAcc0;
@@ -148,6 +148,7 @@ void conv_pool_acc_0(
 
 	for (unsigned int ll = 0; ll < 16; ll++)
 	{
+#pragma HLS PIPELINE
 		layer_num_local[ll] = param_port[ll];
 	}
 
@@ -156,10 +157,12 @@ void conv_pool_acc_0(
 	for (unsigned int l = 0; l < layer_num_local[0]; l++)
 	{
 		cout << "LAYER ACC: CONV Processing " << l << "th layer ..." << endl;
+		int l_temp = l*16;
 		for (unsigned int i = 0; i < 16; i++)
 		{
-			param_conv_local[i] = param_port[16 + l*16 + i];
-			param_pool_local[i] = param_port[16 + l*16 + i];
+#pragma HLS PIPELINE
+			param_conv_local[i] = param_port[16 + l_temp + i];
+			param_pool_local[i] = param_port[16 + l_temp + i];
 		}
 		if (param_pool_local[15] == 0)
 		{
@@ -220,6 +223,7 @@ void conv_pool_acc_1(
 
 	for (unsigned int ll = 0; ll < 16; ll++)
 	{
+#pragma HLS PIPELINE
 		layer_num_local[ll] = param_port[ll];
 	}
 
@@ -228,10 +232,12 @@ void conv_pool_acc_1(
 	for (unsigned int l = 0; l < layer_num_local[0]; l++)
 	{
 		cout << "LAYER ACC: CONV Processing " << l << "th layer ..." << endl;
+		int l_temp = l*16;
 		for (unsigned int i = 0; i < 16; i++)
 		{
-			param_conv_local[i] = param_port[16 + l*16 + i];
-			param_pool_local[i] = param_port[16 + l*16 + i];
+#pragma HLS PIPELINE
+			param_conv_local[i] = param_port[16 + l_temp + i];
+			param_pool_local[i] = param_port[16 + l_temp + i];
 		}
 		if (param_pool_local[15] == 0)
 		{

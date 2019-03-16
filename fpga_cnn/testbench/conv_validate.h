@@ -1,15 +1,15 @@
 #ifndef CONV_VALIDATE_H
 #define CONV_VALIDATE_H
 #include "/opt/Xilinx/Vivado/2018.1/include/gmp.h"
-//#include "/opt/Xilinx/Vivado/2018.1/include/mpfr.h"
+#include "/opt/Xilinx/Vivado/2018.1/include/mpfr.h"
 #include "ap_fixed.h"
 
 class conv_validate
 {
 public:
 	int layer_num;
-	ap_int<512> weight[2048];
-	ap_int<512> input_feature[4096];
+	ap_int<512> weight[16384];
+	ap_int<512> input_feature[6400];
 	ap_int<512> output_feature[4096];
 	ap_int<512> output_feature_software[4096];
 	ap_fixed<32,26> bias[1024];

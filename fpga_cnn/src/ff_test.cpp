@@ -1,5 +1,6 @@
-//#include "/opt/Xilinx/Vivado/2018.1/include/gmp.h"
 #include <iostream>
+#include "/opt/Xilinx/Vivado/2018.1/include/gmp.h"
+#include "/opt/Xilinx/Vivado/2018.1/include/mpfr.h"
 #include "ap_fixed.h"
 #include "construct_net.h"
 #include "../testbench/conv_validate.h"
@@ -11,7 +12,7 @@ void print_para_list(ap_uint<32>* para);
 
 int main()
 {
-	int i,j;
+	int i,j,k;
 	cout <<"Test Begin..."<<endl;
 
 	ap_uint<32> para_list[512];
@@ -27,7 +28,7 @@ int main()
 	conv_validate conv_test(para_list);
 
 
-	sub_net_1(
+	sub_net_0(
 					para_list,						//ap_uint<32> param_port[528],
 					conv_test.bias,					//ap_fixed<32,26> bias_in[1024],
 					conv_test.weight,				//data_type_itf weight_in[2048],
@@ -37,14 +38,35 @@ int main()
 					conv_test.output_feature,	    //data_type_itf data_out_1[2048],
 					0								//int select
 				);
+
 	//conv_test.print_feature_in();
+
+
+	for(k = 0 ; k < 1; k++)
+	{
+		cout <<"data out"<<"========="<<k<<"============="<<endl;
+		cout << endl;
+		cout << endl;
+		for(i = 0 ; i < 16; i++)
+		{
+			for(j = 0 ; j < 16; j++)
+				cout <<  float(data_temp[(k/32)*16*16 + i*16 + j].range(16*(k%32)+15,16*(k%32)+0))/64 <<" ";
+			cout << endl;
+		}
+		cout << endl;
+	}
 //	for(i = 0 ; i < 16; i++)
 //	{
 //		for(j = 0 ; j < 16; j++)
-//			cout << setw(12) <<  float(data_temp[i*16+j].range(15,0))/64 <<" ";
+//			cout  <<  float(data_temp[i*16+j].range(15,0))/64 <<" ";
 //		cout << endl;
 //	}
-	/*
+
+
+
+
+
+
 	sub_net_0	(
 					para_list,						//ap_uint<32> param_port[528],
 					conv_test.bias,					//ap_fixed<32,26> bias_in[1024],
@@ -55,13 +77,13 @@ int main()
 					conv_test.output_feature,	    //data_type_itf data_out_1[2048],
 					1								//int select
 				);
-	*/
-//	for(i = 0 ; i < 16; i++)
-//	{
-//		for(j = 0 ; j < 16; j++)
-//			cout << setw(12) << float(conv_test.output_feature[i*16+j].range(15,0))/64 <<" ";
-//		cout << endl;
-//	}
+
+	for(i = 0 ; i < 16; i++)
+	{
+		for(j = 0 ; j < 16; j++)
+			cout  << float(conv_test.output_feature[i*16+j].range(15,0))/64 <<" ";
+		cout << endl;
+	}
 	cout <<"Test Finish"<<endl;
 	return 0;
 }
@@ -90,13 +112,13 @@ void construct_para(ap_uint<32>* para)
 	  para[16+14] = 0;//inport
 	  para[16+15] = 0;
 	  //0-3.conv para
-	  para[32+0] = 1;//N
+	  para[32+0] = 192;//N
 	  para[32+1] = 3;//K
-	  para[32+2] = 1;//M
-	  para[32+3] = 16;//Rin
-	  para[32+4] = 16;//Cin
-	  para[32+5] = 16;//R
-	  para[32+6] = 16;//C
+	  para[32+2] = 128;//M
+	  para[32+3] = 13;//Rin
+	  para[32+4] = 13;//Cin
+	  para[32+5] = 13;//R
+	  para[32+6] = 13;//C
 	  para[32+7] = 1;//S
 	  para[32+8] = 1;//P
 	  para[32+9] = 1;//act
@@ -129,7 +151,7 @@ void construct_para(ap_uint<32>* para)
 
 
 	  //1-1.layer_num
-	  para[256+0] = 3;
+	  para[256+0] = 1;
 	  //1-2.conv_para
 	  para[256+16+0] = 1; //N
 	  para[256+16+1] = 3; //K
