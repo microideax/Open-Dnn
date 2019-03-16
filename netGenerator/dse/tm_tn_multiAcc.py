@@ -41,6 +41,7 @@ def multiAcc_dse():
     conv_S = []
     flag = []
     cut_flag = []
+    pool_N = []
 
     sub_conv_N = []
     sub_conv_M = []
@@ -76,7 +77,7 @@ def multiAcc_dse():
     """
     step 1: extract model from txt file with parameter no_include_fc / include_fc
     """
-    conv_N, conv_M, conv_r, conv_R, conv_K, conv_S, conv_G, flag, cut_flag = model_extract('no_include_fc')
+    conv_N, conv_M, conv_r, conv_R, conv_K, conv_S, conv_G, flag, cut_flag, pool_N = model_extract('no_include_fc')
     print("Extracted cut flag: ", cut_flag)
     OPs = gop_calculate(conv_N, conv_M, conv_R, conv_K)
     max_layerout = max_layer_dataout(conv_N, conv_M, conv_R, conv_K)
@@ -147,7 +148,7 @@ def multiAcc_dse():
     #     for j in range(0, len(pair_list[i][1])):
     #         print((pair_list[i][1][j]))
             # conv_param_write(pair_list[i][1][j])
-    generate_param_file(pair_list, "acc_ins_params.txt")
+    generate_param_file(pair_list, pool_N, "acc_ins_params.txt")
 
     # print item_list
     #print "gop_list: ",  gop_list

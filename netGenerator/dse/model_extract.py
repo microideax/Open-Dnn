@@ -19,7 +19,7 @@ def model_extract(include_fc):
     init_fc_Rin = prms[prms_str.index("nn_in_data_size_fc")]
     init_fc_M   = prms[prms_str.index("nn_out_number_fc")]
     init_fc_K   = prms[prms_str.index("nn_channel_size_fc")]
-    # cut_flag_conv = []
+    init_pool_N = prms[prms_str.index("nn_in_data_size_pooling")]
     cut_flag_conv = prms[prms_str.index("conv_cut_flag")]
     cut_flag_pool = prms[prms_str.index("pool_cut_flag")]
     cut_flag_fc   = prms[prms_str.index("fc_cut_flag")]
@@ -131,7 +131,7 @@ def model_extract(include_fc):
     # print "flag", flag
     # print "cut_flag", cut_flag
 
-    return conv_N, conv_M, conv_r, conv_R, conv_K, conv_S, conv_G, flag, cut_flag
+    return conv_N, conv_M, conv_r, conv_R, conv_K, conv_S, conv_G, flag, cut_flag, init_pool_N
 
 # if __name__ == "__main__":
 #     conv_N, conv_M, conv_r, conv_R, conv_K, conv_S = model_extract()
