@@ -126,7 +126,7 @@ def model_partition_by_gop(conv_N, conv_M, conv_r, conv_R, conv_K, conv_S, conv_
                     if balance_ratio < min_ration:
                         min_ration = balance_ratio
                         min_pair = [i, j]
-                        print "min_ratio: ", min_ration, min_pair
+                        print("min_ratio: ", min_ration, min_pair)
 
     return min_pair, min_ration
 
@@ -177,15 +177,15 @@ def constrained_dse(N, M, r, R, K, S, flag, DSP, P_const, factor, acc_per_die):
 # by John: find the optimal number of accelerators in each sub-net
 def per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub_conv_S, sub_flag):
 
-    print "sub_conv_N (original): ", sub_conv_N
-    print "sub_flag (original): ", sub_flag
+    print("sub_conv_N (original): ", sub_conv_N)
+    print("sub_flag (original): ", sub_flag)
 
     opt_res = []
 
     # i: iterate over each sub-net
     for i in range(0, len(sub_conv_N)):
         # print "sub_conv_N[" + str(i) + "]: ", sub_conv_N[i]
-        min_cycle = sys.maxint
+        min_cycle = sys.maxsize
         min_idx = -1
 
         sub_conv_net_gop = gop_calculate(sub_conv_N[i], sub_conv_M[i], sub_conv_R[i], sub_conv_K[i])
@@ -219,7 +219,7 @@ def per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_con
 
                 # -2: illegal setting, pass
                 if k[0] == -2:
-                    print "illegal partitioning of sub-net, passing!"
+                    print("illegal partitioning of sub-net, passing!")
                     continue
 
                 # -1: only one accelerator
@@ -345,7 +345,7 @@ def local_search(sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub
     for i in range(0, len(sub_conv_N)):
         gop_per_subnet.append(gop_calculate(sub_conv_N[i], sub_conv_M[i], sub_conv_R[i], sub_conv_K[i]))
         gop_total += gop_per_subnet[i]
-    print "gop_per_subnet in local_search: ", gop_per_subnet
+    print("gop_per_subnet in local_search: ", gop_per_subnet)
 
     for i in range(0, len(sub_conv_N)):
         if i < len(sub_conv_N) - 1:
@@ -396,8 +396,8 @@ def local_search(sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub
         search_counter = search_counter + 1
     # if search_stop == 1:
         # and search_counter == 101
-    print "local search stopped at =", search_counter - 1, "current ratio: ", ratio_tmp
-    print "initial ratio ->", ratio_init
+    print("local search stopped at =", search_counter - 1, "current ratio: ", ratio_tmp)
+    print("initial ratio ->", ratio_init)
 
     return pair_list, lat_list, util_list
 
@@ -486,8 +486,8 @@ def per_die_config_dse_multiAcc(sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, 
             pair_list.append(pair)
             lat_list.append(cycle)
             util_list.append(pair[0] * pair[1] / float(int(dsp_list[i][j])))
-    print "dsp_list value: ", dsp_list, pair_list
-    print "util_list value: ", util_list
+    print("dsp_list value: ", dsp_list, pair_list)
+    print("util_list value: ", util_list)
 
             # note done best configuration
 
@@ -537,11 +537,11 @@ def single_item_search(layer_list, acc_cluster_num, conv_N, conv_M, conv_r, conv
     """
     item_list = []
     search_counter = 0
-    print "started global search"
+    print("started global search")
 
     item = [0], [1, 2], [3, 4]
 
-    print item
+    print(item)
     sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub_conv_S, sub_flag \
             = model_split_by_list(conv_N, conv_M, conv_r, conv_R, conv_K, conv_S, flag, item)
     sub_pair_list, sub_lat_list, sub_util_list = \

@@ -11,7 +11,7 @@ Cloud-Dnn is an open-source framework that maps DNN models trained by Caffe to F
 -AWS F1.2Xlarge instance
 
 ## Software requirement
-- Python
+- Python 3.5
 - GCC
 - Xilinx vivado_hls 2018.1
 - Xilinx vivado 2018.1

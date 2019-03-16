@@ -114,8 +114,8 @@ def model_extract(include_fc):
     # find the positions of Conv layers followed by Pooling layer
     flag = [False] * conv_layer_num
     count = 0
-    print prms[0]
-    print len(prms[0])
+    print(prms[0])
+    print(len(prms[0]))
     for prms_index in range(len(prms[0]) - 2):
         if "Convolution" in prms[0][prms_index]:
             if "Pooling" in prms[0][prms_index + 1] + prms[0][prms_index + 2]:

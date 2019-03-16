@@ -6,7 +6,7 @@ import random
 def model_partition_ordered(conv_N, conv_M, conv_r, conv_R, conv_K, conv_S, conv_G, flag, i, j):
 
     if len(conv_N) <= 3:
-        print "Network size is smaller than 3, results are illegal!"
+        print("Network size is smaller than 3, results are illegal!")
 
     sub_conv_N = []
     sub_conv_M = []

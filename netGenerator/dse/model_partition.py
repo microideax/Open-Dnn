@@ -46,4 +46,4 @@ if __name__ == "__main__":
     layer_list_2 = [(0, 'c'), (1, 'p'), (2, 'c'), (3, 'c')]
     layer_list_3 = [1, 2, 3, 4]
     for idx, item in enumerate(partition_to_k(layer_list_3, 3, False), 1):
-        print item
+        print(item)
