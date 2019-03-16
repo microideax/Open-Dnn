@@ -154,7 +154,7 @@ def gop_calculate(conv_N, conv_M, conv_R, conv_K):
 
     for i in range(0, conv_layer_num):
         tmp = conv_M[i] * conv_N[i] * conv_R[i] * conv_R[i] * conv_K[i] * conv_K[i] * 2
-        # print tmp, "  "
+        # print(conv_N[i], conv_M[i], conv_R[i], conv_K[i])
         op_layer += tmp
 
     gop_all = op_layer

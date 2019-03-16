@@ -9,7 +9,19 @@ import pprint
 import threading
 import multiprocessing
 import time
-from compiler.ast import flatten
+# from compiler.ast import flatten
+# from funcy import flatten
+
+
+def flatten(alist):
+    new_list = []
+    for item in alist:
+        if isinstance(item, (list, tuple)):
+            new_list.extend(flat(item))
+        else:
+            new_list.append(item)
+    return new_list
+
 
 # convolutional layer performance
 def conv_layer_perf(n, m, r, s, k, Tn, Tm, P_const, Tr, Tc):
@@ -173,6 +185,27 @@ def constrained_dse(N, M, r, R, K, S, flag, DSP, P_const, factor, acc_per_die):
     return opt_pair, min_local_cycle, cycle_per_layer
 
 
+# k: number of accelerators, 1, 2, 3 only
+def split_sub_net(start_index, end_index, k):
+    no_layer = end_index - start_index
+
+    # if the layers are more than accelerators
+    if k <= no_layer:
+        if k == 1:
+            yield [-1]
+        if k == 2:
+           for i in range(start_index + 1, end_index):
+               yield [i]
+        if k == 3:
+            for i in range(start_index + 1, end_index):
+                for j in range(i + 1, end_index):
+                    yield [i, j]
+
+    # if the layers are less than accelerators
+    else:
+        yield [-2]
+
+
 
 # by John: find the optimal number of accelerators in each sub-net
 def per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub_conv_S, sub_flag):
@@ -193,8 +226,7 @@ def per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_con
         pair_list = []
 
         # when the number of accelerators is j
-        # for j in range(1, 3 + 1):
-        for j in range(1, 3+1):
+        for j in range(1, 3 + 1):
             # cycle should be compared here, to find optimal accelerator number and config
             lat_list = []
             start_index = 0
@@ -234,7 +266,8 @@ def per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_con
 
                 # else: 2 or 3 accelerators
                 else:
-                    zi = zip([0] + k, k + [None])
+                    zi = list(zip([0] + k, k + [None]))
+                    print("testing zi in python 3.5", zi, len(zi))
                     for idx in range(0, len(zi)):
                         sub_conv_M_new.append(flatten(sub_conv_M[i])[zi[idx][0]:zi[idx][1]])
                         sub_conv_N_new.append(flatten(sub_conv_N[i])[zi[idx][0]:zi[idx][1]])
@@ -243,8 +276,8 @@ def per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_con
                         sub_conv_K_new.append(flatten(sub_conv_K[i])[zi[idx][0]:zi[idx][1]])
                         sub_conv_S_new.append(flatten(sub_conv_S[i])[zi[idx][0]:zi[idx][1]])
                         sub_flag_new.append(flatten(sub_flag[i])[zi[idx][0]:zi[idx][1]])
+                    print("sub_conv_N_new: ", sub_conv_N_new)
 
-                # print "split index k = ", k, "accelerator j = ", j, "sub_conv_N_new: ", sub_conv_N_new
 
                 # m: the mth sub-sub-net in the sub-net
                 temp_pair_list = []
@@ -275,27 +308,6 @@ def per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_con
                 min_idx = n
         opt_res.append([cycle_list[min_idx], pair_list[min_idx]])
     return opt_res
-
-
-# k: number of accelerators, 1, 2, 3 only
-def split_sub_net(start_index, end_index, k):
-    no_layer = end_index - start_index
-
-    # if the layers are more than accelerators
-    if k <= no_layer:
-        if k == 1:
-            yield [-1]
-        if k == 2:
-           for i in range(start_index + 1, end_index):
-               yield [i]
-        if k == 3:
-            for i in range(start_index + 1, end_index):
-                for j in range(i + 1, end_index):
-                    yield [i, j]
-
-    # if the layers are less than accelerators
-    else:
-        yield [-2]
 
 
 def local_search(sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub_conv_S, sub_flag):

@@ -20,11 +20,16 @@ from local_search import per_die_config_dse
 from local_search import per_die_config_dse_multiAcc
 from local_search import per_die_config_dse_multiAcc_flex
 from local_search import conv_net_perf
+from param_write import generate_param_file
 import time
 
+
 def print_line(stage_name):
-    print("\n")
-    print("-" * int(math.ceil((int(80) - len(stage_name))/2)), stage_name, "-" * int(math.ceil((int(80) - len(stage_name))/2)))
+    if stage_name == "line":
+        print("-" * int(math.ceil((int(80)))))
+    else:
+        print("\n")
+        print("-" * int(math.ceil((int(80) - len(stage_name))/2)), stage_name, "-" * int(math.ceil((int(80) - len(stage_name))/2)))
 
 def multiAcc_dse():
     # define the network parameter containers
@@ -103,7 +108,7 @@ def multiAcc_dse():
 
     sub_gop_list = []
     for i in range(0, len(sub_conv_N)):
-        sub_gop_list.append(gop_calculate(sub_conv_N[i], sub_conv_M[i], sub_conv_r[i], sub_conv_K[i]))
+        sub_gop_list.append(gop_calculate(sub_conv_N[i], sub_conv_M[i], sub_conv_R[i], sub_conv_K[i]))
 
 
     print("2: gop of sub_nets", sub_gop_list)
@@ -130,18 +135,33 @@ def multiAcc_dse():
     for i in range(0, len(pair_list)):
         print(pair_list[i])
 
+
+    print_line("Write out configurations")
+    total_acc_num = 0
+    print(len(pair_list), "sub-nets are generated")
+    for i in range(0, len(pair_list)):
+        total_acc_num += len(pair_list[i][1])
+    print(total_acc_num, "accelerators are written into the cofig file")
+    # for i in range(0, len(pair_list)):
+    #     print(pair_list[i])
+    #     for j in range(0, len(pair_list[i][1])):
+    #         print((pair_list[i][1][j]))
+            # conv_param_write(pair_list[i][1][j])
+    generate_param_file(pair_list, "acc_ins_params.txt")
+
     # print item_list
     #print "gop_list: ",  gop_list
     #print "pair_list: ", pair_list
     #print "util_list: ", util_list
     # for i in range(0, len(util_list)):
     #     print util_list[i], sum(util_list[i])
-    print("------------------------Final optimal configuration-------------------------------")
-    # print "Network clustered results =", item_list[util_list.index(min(util_list))]
+    # print("------------------------Final optimal configuration-------------------------------")
+    print_line("System info")
+    # print("Network clustered results =", item_list[util_list.index(min(util_list))])
     # print "<Tm, Tn> = ", pair_list[util_list.index(min(util_list))]
-    # print "Estimated overall latency = ", min(util_list)
+    # print("Estimated overall latency = ", min(util_list))
     print("Overall time cost:", overall_end - overall_start, "s")
-    print("----------------------------------------------------------------------------------")
+    print_line("line")
 
     # item = return_partition(layer_list, 4, False)
     #
@@ -203,7 +223,7 @@ def multiAcc_dse():
     # min_among_mins = pair_list.index(min(overall_lat))
     # print(pair_list[min_among_mins])
 
-    print("---------------------------- test part -------------------------------------------")
+    print_line("test")
     print(conv_net_perf(sub_conv_N[2], sub_conv_M[2], sub_conv_R[2], sub_conv_S[2], sub_conv_K[2], sub_flag[2], 8, 274, 37, 4, 4))
 
 
