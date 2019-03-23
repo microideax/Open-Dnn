@@ -21,6 +21,7 @@ from local_search import per_die_config_dse_multiAcc
 from local_search import per_die_config_dse_multiAcc_flex
 from local_search import conv_net_perf
 from param_write import generate_param_file
+from local_search import flatten
 import time
 
 
@@ -78,7 +79,8 @@ def multiAcc_dse():
     step 1: extract model from txt file with parameter no_include_fc / include_fc
     """
     conv_N, conv_M, conv_r, conv_R, conv_K, conv_S, conv_G, flag, cut_flag, pool_N = model_extract('no_include_fc')
-    print("Extracted cut flag: ", cut_flag)
+    # print("Extracted cut flag: ", cut_flag)
+    # print("Extracted pool flag:", flag)
     OPs = gop_calculate(conv_N, conv_M, conv_R, conv_K)
     max_layerout = max_layer_dataout(conv_N, conv_M, conv_R, conv_K)
 
@@ -132,9 +134,51 @@ def multiAcc_dse():
     overall_end = time.time()
 
     print_line("DSEoutpout")
-    print("Best Configuration Search Results: ")
+    print("Best Configuration Search Results for layer accelerators: ")
     for i in range(0, len(pair_list)):
         print(pair_list[i])
+
+    acc_task_list = []
+    for sub_net_number in range(0, len(sub_conv_N)):
+        print("sub_net_", sub_net_number, " layer_number: ", len(sub_conv_N[sub_net_number]))
+        print("sub_net_", sub_net_number, " layer_acc_number: ", pair_list[sub_net_number][0][0])
+        print("sub_net_cutting_point: ", pair_list[sub_net_number][0][1])
+        # for layer_acc_number in range(0, pair_list[sub_net_number][0][0]):
+        #     print("acc core ", layer_acc_number, " task: ", end='') # sub_net_N[sub_net_number][0:pair_list[sub_net_number][0][0]]
+        for layer_split_num in range(0, len(pair_list[sub_net_number][0][1])):
+            # acc_task_list.append(sub_conv_N[sub_net_number][layer_list])
+            if pair_list[sub_net_number][0][1][0] == -1:
+                for layer_num in range(0, len(sub_conv_N[sub_net_number])):
+                    local_list = []
+                    local_list.append(sub_conv_N[sub_net_number][0])
+                    local_list.append(sub_conv_M[sub_net_number][0])
+                    local_list.append(sub_conv_r[sub_net_number][0])
+                    local_list.append(sub_conv_R[sub_net_number][0])
+                    local_list.append(sub_conv_K[sub_net_number][0])
+                    local_list.append(sub_conv_S[sub_net_number][0])
+                    local_list.append(sub_flag[sub_net_number][0])
+                acc_task_list.append(local_list)
+                # print("acc_task_list: ", acc_task_list)
+
+            # else: 2 or 3 accelerators
+            else:
+                zi = list(zip([0] + pair_list[sub_net_number][0][1], pair_list[sub_net_number][0][1] + [None]))
+                for idx in range(0, len(zi)):
+                    local_list = []
+                    local_list.append(flatten(sub_conv_N[sub_net_number])[zi[idx][0]:zi[idx][1]][0])
+                    local_list.append(flatten(sub_conv_M[sub_net_number])[zi[idx][0]:zi[idx][1]][0])
+                    local_list.append(flatten(sub_conv_r[sub_net_number])[zi[idx][0]:zi[idx][1]][0])
+                    local_list.append(flatten(sub_conv_R[sub_net_number])[zi[idx][0]:zi[idx][1]][0])
+                    local_list.append(flatten(sub_conv_K[sub_net_number])[zi[idx][0]:zi[idx][1]][0])
+                    local_list.append(flatten(sub_conv_S[sub_net_number])[zi[idx][0]:zi[idx][1]][0])
+                    local_list.append(flatten(sub_flag[sub_net_number])[zi[idx][0]:zi[idx][1]][0])
+                    acc_task_list.append(local_list)
+                # print("acc_task_list: ", acc_task_list)
+            # print("\n")
+    print("Accelerator task list: ", acc_task_list)
+    print("Accelerator task list: ")
+    for acc_num in range(0, len(acc_task_list)):
+        print("acc core ", acc_num, " task list: ", acc_task_list[acc_num])
 
 
     print_line("Write out configurations")

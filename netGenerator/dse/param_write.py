@@ -30,8 +30,11 @@ def pool_param_write(pool_param_list, store_file):
 
 
 #TODO: write the conv_pool function parameters into file
-
 #TODO: write the conv only function parameters into file
+def layer_acc_param_write(layer_acc_list, store_file):
+    with open(store_file, "a+") as wf:
+        for i in range(0, len(layer_acc_list)):
+            layer_acc = "conv_pool, "
 
 #TODO: write the sub_net function parameters into file
 def sub_param_write(subn_param_list, store_file):
@@ -50,7 +53,6 @@ def sub_param_write(subn_param_list, store_file):
     wf.close()
 
 
-
 def generate_param_file(conv_param_list, pool_param_list, store_file):
 
     # with open(store_file, "w") as wf:
@@ -60,6 +62,7 @@ def generate_param_file(conv_param_list, pool_param_list, store_file):
         #     for j in range(0, len(parameters[i][1])):
     conv_param_write(conv_param_list, store_file)
     pool_param_write(pool_param_list, store_file)
+    layer_acc_param_write(layer_acc_list, store_file)
     sub_param_write(pool_param_list, store_file)
 
 

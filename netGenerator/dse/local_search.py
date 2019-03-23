@@ -263,6 +263,7 @@ def per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_con
                     sub_conv_K_new.append(sub_conv_K[i])
                     sub_conv_S_new.append(sub_conv_S[i])
                     sub_flag_new.append(sub_flag[i])
+                    print("sub_conv_N_new: ", sub_conv_N_new)
 
                 # else: 2 or 3 accelerators
                 else:
@@ -281,6 +282,7 @@ def per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_con
 
                 # m: the mth sub-sub-net in the sub-net
                 temp_pair_list = []
+                acc_layer_task_list = []
                 for m in range(0, len(sub_conv_N_new)):
                     # print "sub_conv_N_new[" + str(m) + "]: ", sub_conv_N_new[m]
                     sub_net_gop_list.append(gop_calculate(sub_conv_N_new[m], sub_conv_M_new[m], sub_conv_R_new[m], sub_conv_K_new[m]))
@@ -295,7 +297,7 @@ def per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_con
                                                                      factor, j)
                     local_cycle_list.append(cycle)
                     temp_pair_list.append(pair)
-
+                    acc_layer_task_list.append(sub_conv_N_new)
                     # local_pair_list.append(pair)
 
                 cycle_list.append([j, k, max(local_cycle_list)])

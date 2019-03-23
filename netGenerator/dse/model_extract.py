@@ -118,7 +118,8 @@ def model_extract(include_fc):
     print(len(prms[0]))
     for prms_index in range(len(prms[0]) - 2):
         if "Convolution" in prms[0][prms_index]:
-            if "Pooling" in prms[0][prms_index + 1] + prms[0][prms_index + 2]:
+            # if "Pooling" in prms[0][prms_index + 1] + prms[0][prms_index + 2]:
+            if "Pooling" in prms[0][prms_index + 1]:
                 flag[count] = True
             count += 1
 
