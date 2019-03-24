@@ -226,11 +226,10 @@ def multiAcc_dse():
             acc_num_counter += 1
             print("sub net cut into 3")
 
-
-    print("Accelerator task list: ", acc_task_list)
+    # print("Accelerator task list: ", acc_task_list)
     print("Accelerator task list: ")
     for acc_num in range(0, len(acc_task_list)):
-        print("acc core ", acc_num, " task list: ", acc_task_list[acc_num])
+        print("acc core", acc_num, " task list: ", acc_task_list[acc_num])
 
 
     print_line("Write out configurations")
@@ -241,7 +240,7 @@ def multiAcc_dse():
     #     for j in range(0, len(pair_list[i][1])):
     #         print((pair_list[i][1][j]))
             # conv_param_write(pair_list[i][1][j])
-    generate_param_file(pair_list, pool_N, "acc_ins_params.txt")
+    generate_param_file(pair_list, pool_N, acc_task_list, "acc_ins_params.txt")
 
     # print item_list
     #print "gop_list: ",  gop_list
@@ -257,65 +256,7 @@ def multiAcc_dse():
     print("Overall time cost:", overall_end - overall_start, "s")
     print_line("line")
 
-    # item = return_partition(layer_list, 4, False)
-    #
-    # '''step 3: split the layers based on label clustering results'''
-    # print("layer number is: ", int(len(conv_N)))
-    # sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub_conv_S, sub_flag \
-    #     = model_split_by_list(conv_N, conv_M, conv_r, conv_R, conv_K, conv_S, flag, item)
-    # print sub_conv_N
-    # print "model clustering test done!!!"
-    #
-    # '''step 4: do local search for all sub-models and find optimial <Tm, Tn> pair, lat, and util'''
-    # sub_pair_list, sub_lat_list, sub_util_list = \
-    #     local_search(sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub_conv_S, sub_flag)
-    # print sub_pair_list, sub_lat_list, sub_util_list
-    #
-    # if max(sub_lat_list) < overall_lat:
-    #     overall_lat = max(sub_lat_list)
-    #     if len(pair_list) < 10:
-    #         pair_list.append(sub_pair_list)
-    #         pair_list.append([overall_lat])
-    #     else:
-    #         max_among_mins = pair_list.index(max(overall_lat))
-    #         pair_list.remove(pair_list[max_among_mins])
-    #         pair_list.append(sub_pair_list)
-    #         pair_list.append([overall_lat])
 
-    # print(pair_1, "%.2f" % util_1, pair_2, "%.2f" % util_2, pair_3, "%.2f" % util_3, lat_1, lat_2, lat_3)
-    # for i in range(1, int(len(conv_N)-1)):
-    #     for j in range(int(i+1), int(len(conv_N))):
-    # for i in range(1, 10):
-    #     for j in range(1, 10):
-    #         sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub_conv_S, sub_flag = model_split_ordered(conv_N, conv_M, conv_r, conv_R, conv_K, conv_S, flag, i, j)
-    # sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub_conv_S, sub_flag = model_split_unordered(conv_N, conv_M, conv_r, conv_R, conv_K, conv_S, flag)
-    # sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub_conv_S, sub_flag = model_split_by_label(conv_N, conv_M, conv_r, conv_R, conv_K, conv_S, flag, kmeans.labels_)
-    # print(sub_conv_N)
-    # pair_1, lat_1, pair_2, lat_2, pair_3, lat_3, util_1, util_2, util_3 = local_search(sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub_conv_S, sub_flag)
-    #
-    # print(i, j, pair_1, "%.2f" % util_1, pair_2, "%.2f" % util_2, pair_3, "%.2f" % util_3, lat_1, lat_2, lat_3)
-    #
-    # if max(lat_1, lat_2, lat_3) < overall_lat:
-    #     overall_lat = max(lat_1, lat_2, lat_3)
-    #     # if len(pair_list) < 50:
-    #     pair_list.append([i, j])
-    #     pair_list.append(pair_1)
-    #     pair_list.append(pair_2)
-    #     pair_list.append(pair_3)
-    #     pair_list.append([overall_lat])
-    #     # else:
-    #     #     max_among_mins  = pair_list.index(max(overall_lat))
-    #     #     pair_list.remove(pair_list[max_among_mins])
-    #     #     pair_list.append(pair_1)
-    #     #     pair_list.append(pair_2)
-    #     #     pair_list.append(pair_3)
-    #     #     pair_list.append(overall_lat)
-    # print(pair_list)
-
-    # #step 3:
-    # find_min_in_pairs()
-    # min_among_mins = pair_list.index(min(overall_lat))
-    # print(pair_list[min_among_mins])
 
     print_line("test")
     print(conv_net_perf(sub_conv_N[2], sub_conv_M[2], sub_conv_R[2], sub_conv_S[2], sub_conv_K[2], sub_flag[2], 8, 274, 37, 4, 4))

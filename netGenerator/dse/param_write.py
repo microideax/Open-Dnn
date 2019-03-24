@@ -29,12 +29,31 @@ def pool_param_write(pool_param_list, store_file):
     wf.close()
 
 
-#TODO: write the conv_pool function parameters into file
-#TODO: write the conv only function parameters into file
 def layer_acc_param_write(layer_acc_list, store_file):
     with open(store_file, "a+") as wf:
+        conv_core_counter = 0
+        pool_core_counter = 0
         for i in range(0, len(layer_acc_list)):
-            layer_acc = "conv_pool, "
+            pool_flag = False
+            for j in range(0, len(layer_acc_list[i])):
+                print(layer_acc_list[i])
+                print(layer_acc_list[i][j])
+                print(layer_acc_list[i][j][-1])
+                if layer_acc_list[i][j][-1] == True:
+                    pool_flag = True
+                    print("Found layer with pooling")
+                # else:
+                #     pool_flag = False
+            if pool_flag == True:
+                layer_acc = "conv_pool, " + str(conv_core_counter) + "," + str(conv_core_counter) + "," + str(
+                    pool_core_counter) + "\n"
+                conv_core_counter += 1
+                pool_core_counter += 1
+            else:
+                layer_acc = "conv_pool, " + str(conv_core_counter) + "," + str(conv_core_counter) + "\n"
+                conv_core_counter += 1
+            wf.write(layer_acc)
+
 
 #TODO: write the sub_net function parameters into file
 def sub_param_write(subn_param_list, store_file):
@@ -53,7 +72,7 @@ def sub_param_write(subn_param_list, store_file):
     wf.close()
 
 
-def generate_param_file(conv_param_list, pool_param_list, store_file):
+def generate_param_file(conv_param_list, pool_param_list, layer_acc_list, store_file):
 
     # with open(store_file, "w") as wf:
 
@@ -72,5 +91,5 @@ def generate_param_file(conv_param_list, pool_param_list, store_file):
 
 
 if __name__ == "__main__":
-    generate_param_file(conv_param_list, pool_param_list, "acc_ins_params.txt")
+    generate_param_file(conv_param_list, pool_param_list, layer_acc_list, "acc_ins_params.txt")
     # conv_param_write(parameters)
