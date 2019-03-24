@@ -128,7 +128,6 @@ def multiAcc_dse():
     # pair_list, item_list, gop_list, util_list = global_search(layer_list, acc_cluster_num, conv_N, conv_M, conv_r, conv_R, conv_K, conv_S, flag, overall_lat)
     # pair_list, gop_list, util_list = per_die_config_dse_multiAcc(sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K,
                                                               # sub_conv_S, sub_flag)
-
     pair_list = per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub_conv_S, sub_flag)
 
     overall_end = time.time()
@@ -138,43 +137,96 @@ def multiAcc_dse():
     for i in range(0, len(pair_list)):
         print(pair_list[i])
 
+    total_acc_num = 0
+    for i in range(0, len(pair_list)):
+        total_acc_num += len(pair_list[i][1])
+
     acc_task_list = []
+    for acc_num in range(0, total_acc_num):
+        acc_task_list.append([])
+    print("acc_task_list: ", acc_task_list)
+
+    acc_num_counter = 0
     for sub_net_number in range(0, len(sub_conv_N)):
         print("sub_net_", sub_net_number, " layer_number: ", len(sub_conv_N[sub_net_number]))
         print("sub_net_", sub_net_number, " layer_acc_number: ", pair_list[sub_net_number][0][0])
         print("sub_net_cutting_point: ", pair_list[sub_net_number][0][1])
-        # for layer_acc_number in range(0, pair_list[sub_net_number][0][0]):
-        #     print("acc core ", layer_acc_number, " task: ", end='') # sub_net_N[sub_net_number][0:pair_list[sub_net_number][0][0]]
-        for layer_split_num in range(0, len(pair_list[sub_net_number][0][1])):
-            # acc_task_list.append(sub_conv_N[sub_net_number][layer_list])
-            if pair_list[sub_net_number][0][1][0] == -1:
-                for layer_num in range(0, len(sub_conv_N[sub_net_number])):
-                    local_list = []
-                    local_list.append(sub_conv_N[sub_net_number][0])
-                    local_list.append(sub_conv_M[sub_net_number][0])
-                    local_list.append(sub_conv_r[sub_net_number][0])
-                    local_list.append(sub_conv_R[sub_net_number][0])
-                    local_list.append(sub_conv_K[sub_net_number][0])
-                    local_list.append(sub_conv_S[sub_net_number][0])
-                    local_list.append(sub_flag[sub_net_number][0])
-                acc_task_list.append(local_list)
-                # print("acc_task_list: ", acc_task_list)
+        # for sub_net_acc_core in range(0, pair_list[sub_net_number][0][0]):
+        print("acc core_", acc_num_counter)
+        if pair_list[sub_net_number][0][1][0] == -1:
+            for layer_num in range(0, len(sub_conv_N[sub_net_number])):
+                local_list = []
+                local_list.append(sub_conv_N[sub_net_number][layer_num])
+                local_list.append(sub_conv_M[sub_net_number][layer_num])
+                local_list.append(sub_conv_r[sub_net_number][layer_num])
+                local_list.append(sub_conv_R[sub_net_number][layer_num])
+                local_list.append(sub_conv_K[sub_net_number][layer_num])
+                local_list.append(sub_conv_S[sub_net_number][layer_num])
+                local_list.append(sub_flag[sub_net_number][layer_num])
+                acc_task_list[acc_num_counter].append(local_list)
+            acc_num_counter += 1
+            print("sub_net no cut")
+        elif pair_list[sub_net_number][0][1][0] == 1:
+            for layer_num in range(0, pair_list[sub_net_number][0][1][0]):
+                local_list = []
+                local_list.append(sub_conv_N[sub_net_number][layer_num])
+                local_list.append(sub_conv_M[sub_net_number][layer_num])
+                local_list.append(sub_conv_r[sub_net_number][layer_num])
+                local_list.append(sub_conv_R[sub_net_number][layer_num])
+                local_list.append(sub_conv_K[sub_net_number][layer_num])
+                local_list.append(sub_conv_S[sub_net_number][layer_num])
+                local_list.append(sub_flag[sub_net_number][layer_num])
+                acc_task_list[acc_num_counter].append(local_list)
+            acc_num_counter += 1
+            for layer_num in range(pair_list[sub_net_number][0][1][0], len(sub_conv_N[sub_net_number])):
+                local_list = []
+                local_list.append(sub_conv_N[sub_net_number][layer_num])
+                local_list.append(sub_conv_M[sub_net_number][layer_num])
+                local_list.append(sub_conv_r[sub_net_number][layer_num])
+                local_list.append(sub_conv_R[sub_net_number][layer_num])
+                local_list.append(sub_conv_K[sub_net_number][layer_num])
+                local_list.append(sub_conv_S[sub_net_number][layer_num])
+                local_list.append(sub_flag[sub_net_number][layer_num])
+                acc_task_list[acc_num_counter].append(local_list)
+            acc_num_counter += 1
+            print("sub net cut into 2")
+        else:
+            for layer_num in range(0, pair_list[sub_net_number][0][1][0]):
+                local_list = []
+                local_list.append(sub_conv_N[sub_net_number][layer_num])
+                local_list.append(sub_conv_M[sub_net_number][layer_num])
+                local_list.append(sub_conv_r[sub_net_number][layer_num])
+                local_list.append(sub_conv_R[sub_net_number][layer_num])
+                local_list.append(sub_conv_K[sub_net_number][layer_num])
+                local_list.append(sub_conv_S[sub_net_number][layer_num])
+                local_list.append(sub_flag[sub_net_number][layer_num])
+                acc_task_list[acc_num_counter].append(local_list)
+            acc_num_counter += 1
+            for layer_num in range(pair_list[sub_net_number][0][1][0], pair_list[sub_net_number][0][1][1]):
+                local_list = []
+                local_list.append(sub_conv_N[sub_net_number][layer_num])
+                local_list.append(sub_conv_M[sub_net_number][layer_num])
+                local_list.append(sub_conv_r[sub_net_number][layer_num])
+                local_list.append(sub_conv_R[sub_net_number][layer_num])
+                local_list.append(sub_conv_K[sub_net_number][layer_num])
+                local_list.append(sub_conv_S[sub_net_number][layer_num])
+                local_list.append(sub_flag[sub_net_number][layer_num])
+                acc_task_list[acc_num_counter].append(local_list)
+            acc_num_counter += 1
+            for layer_num in range(pair_list[sub_net_number][0][1][1], len(sub_conv_N[sub_net_number])):
+                local_list = []
+                local_list.append(sub_conv_N[sub_net_number][layer_num])
+                local_list.append(sub_conv_M[sub_net_number][layer_num])
+                local_list.append(sub_conv_r[sub_net_number][layer_num])
+                local_list.append(sub_conv_R[sub_net_number][layer_num])
+                local_list.append(sub_conv_K[sub_net_number][layer_num])
+                local_list.append(sub_conv_S[sub_net_number][layer_num])
+                local_list.append(sub_flag[sub_net_number][layer_num])
+                acc_task_list[acc_num_counter].append(local_list)
+            acc_num_counter += 1
+            print("sub net cut into 3")
 
-            # else: 2 or 3 accelerators
-            else:
-                zi = list(zip([0] + pair_list[sub_net_number][0][1], pair_list[sub_net_number][0][1] + [None]))
-                for idx in range(0, len(zi)):
-                    local_list = []
-                    local_list.append(flatten(sub_conv_N[sub_net_number])[zi[idx][0]:zi[idx][1]][0])
-                    local_list.append(flatten(sub_conv_M[sub_net_number])[zi[idx][0]:zi[idx][1]][0])
-                    local_list.append(flatten(sub_conv_r[sub_net_number])[zi[idx][0]:zi[idx][1]][0])
-                    local_list.append(flatten(sub_conv_R[sub_net_number])[zi[idx][0]:zi[idx][1]][0])
-                    local_list.append(flatten(sub_conv_K[sub_net_number])[zi[idx][0]:zi[idx][1]][0])
-                    local_list.append(flatten(sub_conv_S[sub_net_number])[zi[idx][0]:zi[idx][1]][0])
-                    local_list.append(flatten(sub_flag[sub_net_number])[zi[idx][0]:zi[idx][1]][0])
-                    acc_task_list.append(local_list)
-                # print("acc_task_list: ", acc_task_list)
-            # print("\n")
+
     print("Accelerator task list: ", acc_task_list)
     print("Accelerator task list: ")
     for acc_num in range(0, len(acc_task_list)):
@@ -182,10 +234,7 @@ def multiAcc_dse():
 
 
     print_line("Write out configurations")
-    total_acc_num = 0
     print(len(pair_list), "sub-nets are generated")
-    for i in range(0, len(pair_list)):
-        total_acc_num += len(pair_list[i][1])
     print(total_acc_num, "accelerators are written into the cofig file")
     # for i in range(0, len(pair_list)):
     #     print(pair_list[i])
