@@ -6,8 +6,8 @@
 #include "max_pool_acc_innerpp.h"
 
 using namespace std;
-conv_acc< data_type_itf, Tparam, data_type, data_type_w, data_type_o, 32, 4, 8, 8,   5,    11,     32,        32,          32> convAcc0;
-conv_acc< data_type_itf, Tparam, data_type, data_type_w, data_type_o, 32, 4, 8, 8,   5,    11,     32,        32,          32> convAcc1;
+conv_acc< data_type_itf, Tparam, data_type, data_type_w, data_type_o, 32, 4, 8, 8,   5,    5,     32,        32,          32> convAcc0;
+conv_acc< data_type_itf, Tparam, data_type, data_type_w, data_type_o, 32, 4, 8, 8,   5,    5,     32,        32,          32> convAcc1;
 //																	  Tm, Tn,Tr,Tc,S_max,K_max, int IBUF_t, int WBUF_t, int OBUF_t>
 
 void conv_layer_acc_0(
@@ -33,7 +33,7 @@ void conv_layer_acc_0(
 				)
 {
 #pragma HLS INTERFACE m_axi  port=i_data
-#pragma HLS INTERFACE bram   port=out_data
+//#pragma HLS INTERFACE bram   port=out_data
 	convAcc0.conv_layer_acc_2ibuf(N, K, M, R_IN, C_IN, C_OUT, R_OUT, S, P, act, inport, weight_offset, bias_offset, in_offset, out_offset,layer_bias,i_weight,i_data,out_data);
 }
 
@@ -61,7 +61,7 @@ void conv_layer_acc_1(
 					data_type_itf* out_data
 				)
 {
-#pragma HLS INTERFACE bram port=i_data
+//#pragma HLS INTERFACE bram port=i_data
 #pragma HLS INTERFACE bram port=out_data
 	convAcc1.conv_layer_acc_2ibuf(N, K, M, R_IN, C_IN, C_OUT, R_OUT, S, P, act, inport, weight_offset, bias_offset, in_offset, out_offset,layer_bias,i_weight,i_data,out_data);
 }
@@ -85,7 +85,7 @@ void max_pool_layer_acc_0(
 		    maxPoolAcc0.max_pool_layer_mbuf(R_in, C_in, N, K, R, C, S, P, act, i_offset, o_offset, i_data, o_data);
 		};
 
-max_pool_acc< data_type_itf, data_type, data_type_w, data_type_o, 16, 16, 16, 2, 3> maxPoolAcc1;
+max_pool_acc< data_type_itf, data_type, data_type_w, data_type_o, 32, 16, 16, 2, 3> maxPoolAcc1;
 
 void max_pool_layer_acc_1(
 		Tparam R_in,

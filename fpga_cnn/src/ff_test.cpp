@@ -17,11 +17,24 @@ int main()
 
 	ap_uint<32> para_list[512];
 	ap_int<512> data_temp[2048];
+	ap_int<512> data_temp2[2048];
+	ap_int<512> data_temp3[2048];
+	ap_int<512> data_temp4[2048];
+	ap_int<512> data_temp5[2048];
+	ap_int<512> data_temp6[2048];
 
 	for(i = 0 ; i < 512; i++)
 		para_list[i] = 0;
 	for(i = 0 ; i < 2048; i++)
+	{
 		data_temp[i] = 0;
+		data_temp2[i] = 0;
+		data_temp3[i] = 0;
+		data_temp4[i] = 0;
+		data_temp5[i] = 0;
+		data_temp6[i] = 0;
+	}
+
 
 	construct_para(para_list);
 	print_para_list(para_list);
@@ -35,37 +48,33 @@ int main()
 					conv_test.input_feature,	    //data_type_itf data_in_0[2048],
 					data_temp,						//data_type_itf data_out_0[2048],
 					data_temp,						//data_type_itf data_in_1[2048],
-					conv_test.output_feature,	    //data_type_itf data_out_1[2048],
+					//conv_test.output_feature,	    //data_type_itf data_out_1[2048],
+					data_temp2,
 					0								//int select
 				);
 
 	//conv_test.print_feature_in();
 
-
-	for(k = 0 ; k < 1; k++)
-	{
-		cout <<"data out"<<"========="<<k<<"============="<<endl;
-		cout << endl;
-		cout << endl;
-		for(i = 0 ; i < 16; i++)
-		{
-			for(j = 0 ; j < 16; j++)
-				cout <<  float(data_temp[(k/32)*16*16 + i*16 + j].range(16*(k%32)+15,16*(k%32)+0))/64 <<" ";
-			cout << endl;
-		}
-		cout << endl;
-	}
+//
+//	for(k = 0 ; k < 1; k++)
+//	{
+//		cout <<"data out"<<"========="<<k<<"============="<<endl;
+//		cout << endl;
+//		cout << endl;
+//		for(i = 0 ; i < 16; i++)
+//		{
+//			for(j = 0 ; j < 16; j++)
+//				cout <<  float(data_temp[(k/32)*16*16 + i*16 + j].range(16*(k%32)+15,16*(k%32)+0))/64 <<" ";
+//			cout << endl;
+//		}
+//		cout << endl;
+//	}
 //	for(i = 0 ; i < 16; i++)
 //	{
 //		for(j = 0 ; j < 16; j++)
 //			cout  <<  float(data_temp[i*16+j].range(15,0))/64 <<" ";
 //		cout << endl;
 //	}
-
-
-
-
-
 
 	sub_net_0	(
 					para_list,						//ap_uint<32> param_port[528],
@@ -74,16 +83,80 @@ int main()
 					conv_test.input_feature,	    //data_type_itf data_in_0[2048],
 					data_temp,						//data_type_itf data_out_0[2048],
 					data_temp,						//data_type_itf data_in_1[2048],
-					conv_test.output_feature,	    //data_type_itf data_out_1[2048],
+					data_temp2,//conv_test.output_feature,	    //data_type_itf data_out_1[2048],
 					1								//int select
 				);
+
+
+
+	sub_net_0	(
+					para_list,						//ap_uint<32> param_port[528],
+					conv_test.bias,					//ap_fixed<32,26> bias_in[1024],
+					conv_test.weight,				//data_type_itf weight_in[2048],
+					data_temp2,	    //data_type_itf data_in_0[2048],
+					data_temp3,						//data_type_itf data_out_0[2048],
+					data_temp3,						//data_type_itf data_in_1[2048],
+					data_temp4,//conv_test.output_feature,	    //data_type_itf data_out_1[2048],
+					0								//int select
+				);
+
+
+	sub_net_0	(
+					para_list,						//ap_uint<32> param_port[528],
+					conv_test.bias,					//ap_fixed<32,26> bias_in[1024],
+					conv_test.weight,				//data_type_itf weight_in[2048],
+					data_temp2,	    //data_type_itf data_in_0[2048],
+					data_temp3,						//data_type_itf data_out_0[2048],
+					data_temp3,						//data_type_itf data_in_1[2048],
+					data_temp4,//conv_test.output_feature,	    //data_type_itf data_out_1[2048],
+					1								//int select
+				);
+
 
 	for(i = 0 ; i < 16; i++)
 	{
 		for(j = 0 ; j < 16; j++)
-			cout  << float(conv_test.output_feature[i*16+j].range(15,0))/64 <<" ";
+			//cout  << float(conv_test.output_feature[i*16+j].range(15,0))/64 <<" ";
+			cout  << float(data_temp4[i*16+j].range(15,0))/64 <<" ";
 		cout << endl;
 	}
+
+
+	sub_net_0	(
+					para_list,						//ap_uint<32> param_port[528],
+					conv_test.bias,					//ap_fixed<32,26> bias_in[1024],
+					conv_test.weight,				//data_type_itf weight_in[2048],
+					data_temp4,	    //data_type_itf data_in_0[2048],
+					data_temp5,						//data_type_itf data_out_0[2048],
+					data_temp5,						//data_type_itf data_in_1[2048],
+					data_temp6,//conv_test.output_feature,	    //data_type_itf data_out_1[2048],
+					0								//int select
+				);
+
+
+	sub_net_0	(
+					para_list,						//ap_uint<32> param_port[528],
+					conv_test.bias,					//ap_fixed<32,26> bias_in[1024],
+					conv_test.weight,				//data_type_itf weight_in[2048],
+					data_temp4,	    //data_type_itf data_in_0[2048],
+					data_temp5,						//data_type_itf data_out_0[2048],
+					data_temp5,						//data_type_itf data_in_1[2048],
+					data_temp6,//conv_test.output_feature,	    //data_type_itf data_out_1[2048],
+					1								//int select
+				);
+
+
+
+	for(i = 0 ; i < 16; i++)
+	{
+		for(j = 0 ; j < 16; j++)
+			//cout  << float(conv_test.output_feature[i*16+j].range(15,0))/64 <<" ";
+			cout  << float(data_temp6[i*16+j].range(15,0))/64 <<" ";
+		cout << endl;
+	}
+
+
+
 	cout <<"Test Finish"<<endl;
 	return 0;
 }

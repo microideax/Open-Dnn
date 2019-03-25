@@ -38,7 +38,7 @@ conv_validate::conv_validate(ap_uint<32>* param_list)
 
 	for(i = 0 ; i < 9;i++)
 	{
-		weight[i].range(15,0) = 64;
+		weight[i].range(15,0) = 16;
 	}
 
 
