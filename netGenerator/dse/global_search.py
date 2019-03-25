@@ -41,7 +41,7 @@ class SearchProcess(multiprocessing.Process):
 
         search_counter = 0
 
-        print "Process " + str(self.processIdx) + " starts global search."
+        print("Process " + str(self.processIdx) + " starts global search.")
 
         for idx, item in enumerate(partition_to_k(self.layer_list, self.acc_cluster_num, False), 0):
             if idx % PROCESS_NUM == self.processIdx:
@@ -78,7 +78,7 @@ class SearchProcess(multiprocessing.Process):
             self.result_Q.put((process_pair_list, process_item_list, process_gop_list, process_util_list))
 
         end = time.time()
-        print "Thread ", self.processIdx, " :", (end - start)
+        print("Thread ", self.processIdx, " :", (end - start))
 
 
 def global_search(layer_list, acc_cluster_num, conv_N, conv_M, conv_r, conv_R, conv_K, conv_S, flag, overall_lat):

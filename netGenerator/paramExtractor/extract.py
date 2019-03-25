@@ -47,6 +47,9 @@ def extract_caffe_model(model, weights, output_path, storefile):
     nn_in_number_fc = []
     nn_out_number_fc = []
     nn_channel_size_fc = []
+    nn_conv_cutable = []
+    nn_pool_cutable = []
+    nn_fc_cutable = []
 
 
     # np.set_printoptions(threshold='nan')
@@ -124,6 +127,7 @@ def extract_caffe_model(model, weights, output_path, storefile):
     print("final cutable points: ", cutable)
     layer_num = 0
     param_num = 0
+
     for layer in net.layers:
         # print(layer.type)
         if layer.type == 'Convolution' or layer.type == 'Pooling' or layer.type == 'Concat' or layer.type == 'InnerProduct':
@@ -132,13 +136,19 @@ def extract_caffe_model(model, weights, output_path, storefile):
             nn_layer_type.append(layer.type)
             if layer.type == 'Convolution':
                 nn_in_data_size_conv.append(layer_param_list[param_num][1])
+                nn_conv_cutable.append(cutable[layer_num])
             if layer.type == 'Pooling':
                 nn_in_data_size_pooling.append(layer_param_list[param_num][1])
+                nn_pool_cutable.append(cutable[layer_num])
+            if layer.type == 'Concat' or layer.type == 'InnerProduct':
+                nn_fc_cutable.append(cutable[layer_num])
 
         if layer.type == 'Convolution' or layer.type == 'Pooling' or layer.type == 'Concat' or layer.type == 'InnerProduct' or layer.type == 'LRN':
             param_num = param_num + 1
         layer_num = layer_num + 1
 
+    # for x, y in layer_dic.items():
+    #     print(x, y)
     layer_count = 0
     temp_layer_list = []
 
@@ -152,7 +162,6 @@ def extract_caffe_model(model, weights, output_path, storefile):
             kernel = layer.convolution_param.kernel_size[0] if len(layer.convolution_param.kernel_size) else 1
             stride = layer.convolution_param.stride[0] if len(layer.convolution_param.stride) else 1
             pad = layer.convolution_param.pad[0] if len(layer.convolution_param.pad) else 0
-
             print(layer.name)
             tmp_count = 0
             tmp_dim_list = []
@@ -177,11 +186,12 @@ def extract_caffe_model(model, weights, output_path, storefile):
             pad = layer.pooling_param.pad
             tmp_count = 0
             tmp_dim_list = []
+            print(layer.name)
             for layer_name, dim in net.blobs.items():
                 tmp_dim_list.append(dim.data.shape[1])
                 tmp_count = tmp_count + 1
                 if tmp_count > 1:
-                    print("previous layer info: ", layer_name, dim.data.shape[1], tmp_dim_list[-2])
+                    # print("previous layer info: ", layer_name, dim.data.shape[1], tmp_dim_list[-2])
                     if layer_name == layer.name:
                         in_num = tmp_dim_list[-2]
             nn_channel_size_pooling.append(kernel)
@@ -192,6 +202,7 @@ def extract_caffe_model(model, weights, output_path, storefile):
             output = layer.inner_product_param.num_output
             tmp_count = 0
             tmp_dim_list = []
+            print(layer.name)
             for layer_name, dim in net.blobs.items():
                 tmp_dim_list.append(dim.data.shape)
                 tmp_count = tmp_count + 1
@@ -211,7 +222,7 @@ def extract_caffe_model(model, weights, output_path, storefile):
 
         count = count + 1
 
-
+    print("Start writing param to file")
 
     # Writing the extracted params to an intermediate file
     write_param_inline("Network Structure: ", nn_layer_type, storefile)
@@ -232,6 +243,9 @@ def extract_caffe_model(model, weights, output_path, storefile):
     write_param_inline("nn_in_number_fc: ", nn_in_number_fc, storefile)
     write_param_inline("nn_out_number_fc: ", nn_out_number_fc, storefile)
     write_param_inline("nn_channel_size_fc: ", nn_channel_size_fc, storefile)
+    write_param_inline("conv_cut_flag: ", nn_conv_cutable, storefile)
+    write_param_inline("pool_cut_flag: ", nn_pool_cutable, storefile)
+    write_param_inline("fc_cut_flag: ", nn_fc_cutable, storefile)
 
 
 

@@ -9,7 +9,19 @@ import pprint
 import threading
 import multiprocessing
 import time
-from compiler.ast import flatten
+# from compiler.ast import flatten
+# from funcy import flatten
+
+
+def flatten(alist):
+    new_list = []
+    for item in alist:
+        if isinstance(item, (list, tuple)):
+            new_list.extend(flat(item))
+        else:
+            new_list.append(item)
+    return new_list
+
 
 # convolutional layer performance
 def conv_layer_perf(n, m, r, s, k, Tn, Tm, P_const, Tr, Tc):
@@ -126,7 +138,7 @@ def model_partition_by_gop(conv_N, conv_M, conv_r, conv_R, conv_K, conv_S, conv_
                     if balance_ratio < min_ration:
                         min_ration = balance_ratio
                         min_pair = [i, j]
-                        print "min_ratio: ", min_ration, min_pair
+                        print("min_ratio: ", min_ration, min_pair)
 
     return min_pair, min_ration
 
@@ -173,19 +185,40 @@ def constrained_dse(N, M, r, R, K, S, flag, DSP, P_const, factor, acc_per_die):
     return opt_pair, min_local_cycle, cycle_per_layer
 
 
+# k: number of accelerators, 1, 2, 3 only
+def split_sub_net(start_index, end_index, k):
+    no_layer = end_index - start_index
+
+    # if the layers are more than accelerators
+    if k <= no_layer:
+        if k == 1:
+            yield [-1]
+        if k == 2:
+           for i in range(start_index + 1, end_index):
+               yield [i]
+        if k == 3:
+            for i in range(start_index + 1, end_index):
+                for j in range(i + 1, end_index):
+                    yield [i, j]
+
+    # if the layers are less than accelerators
+    else:
+        yield [-2]
+
+
 
 # by John: find the optimal number of accelerators in each sub-net
 def per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub_conv_S, sub_flag):
 
-    print "sub_conv_N (original): ", sub_conv_N
-    print "sub_flag (original): ", sub_flag
+    print("sub_conv_N (original): ", sub_conv_N)
+    print("sub_flag (original): ", sub_flag)
 
     opt_res = []
 
     # i: iterate over each sub-net
     for i in range(0, len(sub_conv_N)):
         # print "sub_conv_N[" + str(i) + "]: ", sub_conv_N[i]
-        min_cycle = sys.maxint
+        min_cycle = sys.maxsize
         min_idx = -1
 
         sub_conv_net_gop = gop_calculate(sub_conv_N[i], sub_conv_M[i], sub_conv_R[i], sub_conv_K[i])
@@ -193,8 +226,7 @@ def per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_con
         pair_list = []
 
         # when the number of accelerators is j
-        # for j in range(1, 3 + 1):
-        for j in range(1, 3+1):
+        for j in range(1, 3 + 1):
             # cycle should be compared here, to find optimal accelerator number and config
             lat_list = []
             start_index = 0
@@ -219,7 +251,7 @@ def per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_con
 
                 # -2: illegal setting, pass
                 if k[0] == -2:
-                    print "illegal partitioning of sub-net, passing!"
+                    print("illegal partitioning of sub-net, passing!")
                     continue
 
                 # -1: only one accelerator
@@ -231,10 +263,12 @@ def per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_con
                     sub_conv_K_new.append(sub_conv_K[i])
                     sub_conv_S_new.append(sub_conv_S[i])
                     sub_flag_new.append(sub_flag[i])
+                    print("sub_conv_N_new: ", sub_conv_N_new)
 
                 # else: 2 or 3 accelerators
                 else:
-                    zi = zip([0] + k, k + [None])
+                    zi = list(zip([0] + k, k + [None]))
+                    print("testing zi in python 3.5", zi, len(zi))
                     for idx in range(0, len(zi)):
                         sub_conv_M_new.append(flatten(sub_conv_M[i])[zi[idx][0]:zi[idx][1]])
                         sub_conv_N_new.append(flatten(sub_conv_N[i])[zi[idx][0]:zi[idx][1]])
@@ -243,11 +277,12 @@ def per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_con
                         sub_conv_K_new.append(flatten(sub_conv_K[i])[zi[idx][0]:zi[idx][1]])
                         sub_conv_S_new.append(flatten(sub_conv_S[i])[zi[idx][0]:zi[idx][1]])
                         sub_flag_new.append(flatten(sub_flag[i])[zi[idx][0]:zi[idx][1]])
+                    print("sub_conv_N_new: ", sub_conv_N_new)
 
-                # print "split index k = ", k, "accelerator j = ", j, "sub_conv_N_new: ", sub_conv_N_new
 
                 # m: the mth sub-sub-net in the sub-net
                 temp_pair_list = []
+                acc_layer_task_list = []
                 for m in range(0, len(sub_conv_N_new)):
                     # print "sub_conv_N_new[" + str(m) + "]: ", sub_conv_N_new[m]
                     sub_net_gop_list.append(gop_calculate(sub_conv_N_new[m], sub_conv_M_new[m], sub_conv_R_new[m], sub_conv_K_new[m]))
@@ -262,7 +297,7 @@ def per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_con
                                                                      factor, j)
                     local_cycle_list.append(cycle)
                     temp_pair_list.append(pair)
-
+                    acc_layer_task_list.append(sub_conv_N_new)
                     # local_pair_list.append(pair)
 
                 cycle_list.append([j, k, max(local_cycle_list)])
@@ -275,27 +310,6 @@ def per_die_config_dse_multiAcc_flex(sub_conv_N, sub_conv_M, sub_conv_r, sub_con
                 min_idx = n
         opt_res.append([cycle_list[min_idx], pair_list[min_idx]])
     return opt_res
-
-
-# k: number of accelerators, 1, 2, 3 only
-def split_sub_net(start_index, end_index, k):
-    no_layer = end_index - start_index
-
-    # if the layers are more than accelerators
-    if k <= no_layer:
-        if k == 1:
-            yield [-1]
-        if k == 2:
-           for i in range(start_index + 1, end_index):
-               yield [i]
-        if k == 3:
-            for i in range(start_index + 1, end_index):
-                for j in range(i + 1, end_index):
-                    yield [i, j]
-
-    # if the layers are less than accelerators
-    else:
-        yield [-2]
 
 
 def local_search(sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub_conv_S, sub_flag):
@@ -345,7 +359,7 @@ def local_search(sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub
     for i in range(0, len(sub_conv_N)):
         gop_per_subnet.append(gop_calculate(sub_conv_N[i], sub_conv_M[i], sub_conv_R[i], sub_conv_K[i]))
         gop_total += gop_per_subnet[i]
-    print "gop_per_subnet in local_search: ", gop_per_subnet
+    print("gop_per_subnet in local_search: ", gop_per_subnet)
 
     for i in range(0, len(sub_conv_N)):
         if i < len(sub_conv_N) - 1:
@@ -396,8 +410,8 @@ def local_search(sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub
         search_counter = search_counter + 1
     # if search_stop == 1:
         # and search_counter == 101
-    print "local search stopped at =", search_counter - 1, "current ratio: ", ratio_tmp
-    print "initial ratio ->", ratio_init
+    print("local search stopped at =", search_counter - 1, "current ratio: ", ratio_tmp)
+    print("initial ratio ->", ratio_init)
 
     return pair_list, lat_list, util_list
 
@@ -486,8 +500,8 @@ def per_die_config_dse_multiAcc(sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, 
             pair_list.append(pair)
             lat_list.append(cycle)
             util_list.append(pair[0] * pair[1] / float(int(dsp_list[i][j])))
-    print "dsp_list value: ", dsp_list, pair_list
-    print "util_list value: ", util_list
+    print("dsp_list value: ", dsp_list, pair_list)
+    print("util_list value: ", util_list)
 
             # note done best configuration
 
@@ -537,11 +551,11 @@ def single_item_search(layer_list, acc_cluster_num, conv_N, conv_M, conv_r, conv
     """
     item_list = []
     search_counter = 0
-    print "started global search"
+    print("started global search")
 
     item = [0], [1, 2], [3, 4]
 
-    print item
+    print(item)
     sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R, sub_conv_K, sub_conv_S, sub_flag \
             = model_split_by_list(conv_N, conv_M, conv_r, conv_R, conv_K, conv_S, flag, item)
     sub_pair_list, sub_lat_list, sub_util_list = \

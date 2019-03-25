@@ -4,7 +4,11 @@ max_pool, data_type_itf, data_type, data_type_w, data_type_o, 32, 16, 16, 2, 3
 max_pool, data_type_itf, data_type, data_type_w, data_type_o, 16, 16, 16, 2, 3
 fc, data_type_itf, Tparam, data_type, data_type_w, data_type_o, 32, 32,  5,  5
 conv_pool, 0, 0, 0
-conv_pool, 1 ,1, 1
+conv_pool, 1, 1, 1
+conv_pool, 2, 2
+conv_pool, 3, 3
+conv_pool, 4, 4, 2
+
 
 sub_net, 0,2,1024,4096,2048,2048,2048,2048,2048
 sub_net, 1,2,1024,4096,2048,2048,2048,2048,2048
