@@ -22,6 +22,8 @@ from local_search import per_die_config_dse_multiAcc_flex
 from local_search import conv_net_perf
 from param_write import generate_param_file
 from local_search import flatten
+from task_analysis import acc_task_analysis
+from task_analysis import subnet_task_analysis
 import time
 
 
@@ -137,125 +139,29 @@ def multiAcc_dse():
     for i in range(0, len(pair_list)):
         print(pair_list[i])
 
-    total_acc_num = 0
-    for i in range(0, len(pair_list)):
-        total_acc_num += len(pair_list[i][1])
+    acc_task_list, total_acc_num = acc_task_analysis(pair_list, sub_conv_N, sub_conv_M, sub_conv_r, \
+                                      sub_conv_R, sub_conv_K, sub_conv_S, sub_flag)
 
-    acc_task_list = []
-    for acc_num in range(0, total_acc_num):
-        acc_task_list.append([])
-    print("acc_task_list: ", acc_task_list)
-
-    acc_num_counter = 0
-    for sub_net_number in range(0, len(sub_conv_N)):
-        print("sub_net_", sub_net_number, " layer_number: ", len(sub_conv_N[sub_net_number]))
-        print("sub_net_", sub_net_number, " layer_acc_number: ", pair_list[sub_net_number][0][0])
-        print("sub_net_cutting_point: ", pair_list[sub_net_number][0][1])
-        # for sub_net_acc_core in range(0, pair_list[sub_net_number][0][0]):
-        print("acc core_", acc_num_counter)
-        if pair_list[sub_net_number][0][1][0] == -1:
-            for layer_num in range(0, len(sub_conv_N[sub_net_number])):
-                local_list = []
-                local_list.append(sub_conv_N[sub_net_number][layer_num])
-                local_list.append(sub_conv_M[sub_net_number][layer_num])
-                local_list.append(sub_conv_r[sub_net_number][layer_num])
-                local_list.append(sub_conv_R[sub_net_number][layer_num])
-                local_list.append(sub_conv_K[sub_net_number][layer_num])
-                local_list.append(sub_conv_S[sub_net_number][layer_num])
-                local_list.append(sub_flag[sub_net_number][layer_num])
-                acc_task_list[acc_num_counter].append(local_list)
-            acc_num_counter += 1
-            print("sub_net no cut")
-        elif pair_list[sub_net_number][0][1][0] == 1:
-            for layer_num in range(0, pair_list[sub_net_number][0][1][0]):
-                local_list = []
-                local_list.append(sub_conv_N[sub_net_number][layer_num])
-                local_list.append(sub_conv_M[sub_net_number][layer_num])
-                local_list.append(sub_conv_r[sub_net_number][layer_num])
-                local_list.append(sub_conv_R[sub_net_number][layer_num])
-                local_list.append(sub_conv_K[sub_net_number][layer_num])
-                local_list.append(sub_conv_S[sub_net_number][layer_num])
-                local_list.append(sub_flag[sub_net_number][layer_num])
-                acc_task_list[acc_num_counter].append(local_list)
-            acc_num_counter += 1
-            for layer_num in range(pair_list[sub_net_number][0][1][0], len(sub_conv_N[sub_net_number])):
-                local_list = []
-                local_list.append(sub_conv_N[sub_net_number][layer_num])
-                local_list.append(sub_conv_M[sub_net_number][layer_num])
-                local_list.append(sub_conv_r[sub_net_number][layer_num])
-                local_list.append(sub_conv_R[sub_net_number][layer_num])
-                local_list.append(sub_conv_K[sub_net_number][layer_num])
-                local_list.append(sub_conv_S[sub_net_number][layer_num])
-                local_list.append(sub_flag[sub_net_number][layer_num])
-                acc_task_list[acc_num_counter].append(local_list)
-            acc_num_counter += 1
-            print("sub net cut into 2")
-        else:
-            for layer_num in range(0, pair_list[sub_net_number][0][1][0]):
-                local_list = []
-                local_list.append(sub_conv_N[sub_net_number][layer_num])
-                local_list.append(sub_conv_M[sub_net_number][layer_num])
-                local_list.append(sub_conv_r[sub_net_number][layer_num])
-                local_list.append(sub_conv_R[sub_net_number][layer_num])
-                local_list.append(sub_conv_K[sub_net_number][layer_num])
-                local_list.append(sub_conv_S[sub_net_number][layer_num])
-                local_list.append(sub_flag[sub_net_number][layer_num])
-                acc_task_list[acc_num_counter].append(local_list)
-            acc_num_counter += 1
-            for layer_num in range(pair_list[sub_net_number][0][1][0], pair_list[sub_net_number][0][1][1]):
-                local_list = []
-                local_list.append(sub_conv_N[sub_net_number][layer_num])
-                local_list.append(sub_conv_M[sub_net_number][layer_num])
-                local_list.append(sub_conv_r[sub_net_number][layer_num])
-                local_list.append(sub_conv_R[sub_net_number][layer_num])
-                local_list.append(sub_conv_K[sub_net_number][layer_num])
-                local_list.append(sub_conv_S[sub_net_number][layer_num])
-                local_list.append(sub_flag[sub_net_number][layer_num])
-                acc_task_list[acc_num_counter].append(local_list)
-            acc_num_counter += 1
-            for layer_num in range(pair_list[sub_net_number][0][1][1], len(sub_conv_N[sub_net_number])):
-                local_list = []
-                local_list.append(sub_conv_N[sub_net_number][layer_num])
-                local_list.append(sub_conv_M[sub_net_number][layer_num])
-                local_list.append(sub_conv_r[sub_net_number][layer_num])
-                local_list.append(sub_conv_R[sub_net_number][layer_num])
-                local_list.append(sub_conv_K[sub_net_number][layer_num])
-                local_list.append(sub_conv_S[sub_net_number][layer_num])
-                local_list.append(sub_flag[sub_net_number][layer_num])
-                acc_task_list[acc_num_counter].append(local_list)
-            acc_num_counter += 1
-            print("sub net cut into 3")
-
-    # print("Accelerator task list: ", acc_task_list)
     print("Accelerator task list: ")
     for acc_num in range(0, len(acc_task_list)):
         print("acc core", acc_num, " task list: ", acc_task_list[acc_num])
+
+    print_line("Subnet_task_out")
+    subnet_task_list = subnet_task_analysis(pair_list, acc_task_list, sub_conv_N, sub_conv_M, sub_conv_r, \
+                                      sub_conv_R, sub_conv_K, sub_conv_S, sub_flag)
+    print("sub net interface list:")
+    for i in range(0, len(subnet_task_list)):
+        print(subnet_task_list[i])
 
 
     print_line("Write out configurations")
     print(len(pair_list), "sub-nets are generated")
     print(total_acc_num, "accelerators are written into the cofig file")
-    # for i in range(0, len(pair_list)):
-    #     print(pair_list[i])
-    #     for j in range(0, len(pair_list[i][1])):
-    #         print((pair_list[i][1][j]))
-            # conv_param_write(pair_list[i][1][j])
-    generate_param_file(pair_list, pool_N, acc_task_list, "acc_ins_params.txt")
+    generate_param_file(pair_list, pool_N, acc_task_list, subnet_task_list, "acc_ins_params.txt")
 
-    # print item_list
-    #print "gop_list: ",  gop_list
-    #print "pair_list: ", pair_list
-    #print "util_list: ", util_list
-    # for i in range(0, len(util_list)):
-    #     print util_list[i], sum(util_list[i])
-    # print("------------------------Final optimal configuration-------------------------------")
-    print_line("System info")
-    # print("Network clustered results =", item_list[util_list.index(min(util_list))])
-    # print "<Tm, Tn> = ", pair_list[util_list.index(min(util_list))]
-    # print("Estimated overall latency = ", min(util_list))
+    print_line("netGen run time system info")
     print("Overall time cost:", overall_end - overall_start, "s")
     print_line("line")
-
 
 
     print_line("test")
