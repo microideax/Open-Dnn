@@ -52,8 +52,8 @@ def gen_param_pragma(parameters):
 
 #pragma HLS INTERFACE s_axilite port=param_port bundle=CRTL_BUS
 #pragma HLS INTERFACE m_axi port=param_port offset=slave depth='''+str(parameters[2])+''' bundle=PARAM_IN
-#pragma HLS INTERFACE s_axilite port=bias_in bundle=CRTL_BUS
-#pragma HLS INTERFACE m_axi port=bias_in offset=slave depth='''+str(parameters[3])+''' bundle=BIAS_IN
+//#pragma HLS INTERFACE s_axilite port=bias_in bundle=CRTL_BUS
+//#pragma HLS INTERFACE m_axi port=bias_in offset=slave depth='''+str(parameters[3])+''' bundle=BIAS_IN
 #pragma HLS INTERFACE s_axilite port=weight_in bundle=CRTL_BUS
 #pragma HLS INTERFACE m_axi port=weight_in offset=slave depth='''+str(parameters[4])+''' bundle=WEIGHT_IN 
     '''
@@ -143,7 +143,7 @@ def gen_convpool_func(parameters):
     for i in range(0, int(parameters[1])):
         func_bd += '''
     conv_pool_acc_'''+str(i)+'''(param_port + '''+str(i*512)+''',       
-                bias_in,       
+                //bias_in,       
                 weight_in,  
                 data_in_'''+str(i)+''' + acc'''+str(i)+'''_mem_inport_offset,  
                 data_out_'''+str(i)+''' +acc'''+str(i)+'''_mem_outport_offset); 

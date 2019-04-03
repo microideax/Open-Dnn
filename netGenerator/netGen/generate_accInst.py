@@ -17,12 +17,12 @@ def conv_default_function(idx, parameters):
 		Tparam bias_offset,
 		Tparam in_offset,
 		Tparam out_offset,
-		ap_fixed<32,26>* layer_bias,
+		//ap_fixed<32,26>* layer_bias,
 		data_type_itf* i_weight,
 		data_type_itf* i_data,
 		data_type_itf* out_data
 	){
-	    convAcc'''+str(idx)+'''.conv_layer_acc_mbuf(N, K, M, R_IN, C_IN, C_OUT, R_OUT, S, P, act, inport, weight_offset, bias_offset, in_offset, out_offset,layer_bias,i_weight,i_data,out_data);
+	    convAcc'''+str(idx)+'''.conv_layer_acc_mbuf(N, K, M, R_IN, C_IN, C_OUT, R_OUT, S, P, act, inport, weight_offset, bias_offset, in_offset, out_offset, i_weight, i_data, out_data);
 	};'''
 	return creator, func
 
@@ -98,7 +98,7 @@ def conv_pool_default_func(parameters):
 def conv_pool(idx1, idx2, idx3):
 	func ='''void conv_pool_acc_'''+str(idx1)+'''(
 	Tparam* param_port,
-	ap_fixed<32,26>* bias_in,
+	//ap_fixed<32,26>* bias_in,
 	data_type_itf* weight_in,
 	data_type_itf* data_in,
 	data_type_itf* data_out
@@ -140,7 +140,7 @@ def conv_pool(idx1, idx2, idx3):
 	                         param_conv_local[11], // b_offset
 	                         param_conv_local[12], // in_offset
 	                         param_conv_local[13], // out_offset
-	                         bias_in,
+	                         //bias_in,
 	                         weight_in,
 	                         data_in,
 	                         data_out);
@@ -171,7 +171,7 @@ def conv_pool(idx1, idx2, idx3):
 def single_conv(idx1, idx2):
 	func ='''void conv_pool_acc_'''+str(idx1)+'''(
 	Tparam* param_port,
-	ap_fixed<32,26>* bias_in,
+	//ap_fixed<32,26>* bias_in,
 	data_type_itf* weight_in,
 	data_type_itf* data_in,
 	data_type_itf* data_out
@@ -213,7 +213,7 @@ def single_conv(idx1, idx2):
 	                         param_conv_local[11], // b_offset
 	                         param_conv_local[12], // in_offset
 	                         param_conv_local[13], // out_offset
-	                         bias_in,
+	                         //bias_in,
 	                         weight_in,
 	                         data_in,
 	                         data_out);
@@ -232,7 +232,7 @@ def conv_default_func(parameters):
 
 	func ='''void conv_pool_acc_'''+str(idx1)+'''(
 	Tparam* param_port,
-	ap_fixed<32,26>* bias_in,
+	//ap_fixed<32,26>* bias_in,
 	data_type_itf* weight_in,
 	data_type_itf* data_in,
 	data_type_itf* data_out
@@ -274,7 +274,7 @@ def conv_default_func(parameters):
 	                         param_conv_local[11], // b_offset
 	                         param_conv_local[12], // in_offset
 	                         param_conv_local[13], // out_offset
-	                         bias_in,
+	                         //bias_in,
 	                         weight_in,
 	                         data_in,
 	                         data_out);
