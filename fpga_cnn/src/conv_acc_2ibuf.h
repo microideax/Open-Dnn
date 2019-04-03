@@ -29,6 +29,30 @@ public:
             //cout << "Read bias location: " << bias_offset + i + m << "  Read bias data: " << buf[i].range(15,0)<< endl;
         }
     }
+
+    void b_buf_load_512(W buf[],
+    		            Itf *layer_bias,
+						int bias_offset,
+						int m
+    					)
+    {
+    	int addr_temp1 = 0;
+
+    	Itf temp_buf = (*(layer_bias+bias_offset+m/32));
+#pragma HLS PIPELINE
+        for(int i = 0; i < Tm; i++)
+        {
+#pragma HLS UNROLL
+        	addr_temp1 = (i+m)%32;
+        	buf[i].range(15,0) = temp_buf.range(16*addr_temp1+15,16*addr_temp1);
+
+        	//cout << "bias:" << buf[i].range(15,0) << "     m:" <<m << endl;
+        }
+    }
+
+
+
+
     // Tn << 32 && N << 32
     void in_buf_load_axi(
             T buf[][(Tr - 1) * S_max + K_max][(Tc - 1) * S_max + K_max],
@@ -44,55 +68,94 @@ public:
             int C_IN, 
             int N ) {
         Itf data_tmp = 0;
-        // valid data portion
-        for (int j = r * S - P; j < (r + Tr - 1) * S + K - P ; j++) {//
-            for (int k = c * S - P; k < (c + Tc -1) * S + K - P; k++) {
+        int z0 = n/32;
+        for (int z = n/32; z <= (n+Tn-1)/32; z++) {
+            for (int j = r * S - P; j < (r + Tr - 1) * S + K - P ; j++) {
+                for (int k = c * S - P; k < (c + Tc -1) * S + K - P; k++) {
 #pragma HLS PIPELINE
-                for (int i = 0; i < Tn; i += Tn) {
+    				if ((n >= N) || j < 0 || j >= R_IN || k < 0 || k >= C_IN) {
+    					for (int wr = 0; wr < Tn; wr++) {
 #pragma HLS UNROLL
-                    if ((i + n >= N) || j < 0 || j >= R_IN || k < 0 || k >= C_IN) {
-                        for (int wr = 0; wr < Tn; wr++) {
+    						buf[wr][j - r * S + P][k - c * S + P] = T(0);
+    					}
+    				} else {
+    					data_tmp = *(i_data + in_offset + z * R_IN * C_IN + j * R_IN + k);
+    					for (int wr = 0; wr < Tn; wr++) {
 #pragma HLS UNROLL
-                            buf[wr][j - r * S + P][k - c * S + P] = T(0);
-                        }
-                    } else {
-                        data_tmp = *(i_data + in_offset + (i + n)/32 * R_IN * C_IN + j * R_IN + k);
-                        for (int wr = 0; wr < Tn; wr++) {
-#pragma HLS UNROLL
-                            buf[wr][j - r * S + P][k - c * S + P].range(15,0) = data_tmp.range(((n + wr)%32 + 1) * 16 - 1, ((n + wr)%32) * 16);
-                        }
-                    }
+    						if(z==z0) {
+    							if((n%32+wr)<32)
+    								buf[wr][j - r * S + P][k - c * S + P].range(15,0) = data_tmp.range(((n + wr)%32 + 1) * 16 - 1, ((n + wr)%32) * 16);
+    						} else {
+    							if((wr >= ((z-z0)*32-n%32)) && (wr < ((z-z0)*32-n%32)+32)) {
+    								buf[wr][j - r * S + P][k - c * S + P].range(15,0) = data_tmp.range(((n + wr)%32 + 1) * 16 - 1, ((n + wr)%32) * 16);
+    								//cout << "debug   "<< buf[wr][j - r * S + P][k - c * S + P].range(15,0) <<"   wr:"<<wr<<" z:" << (z-z0)*32 << endl;
+    							}
+    						}
+    					}
+    				}
                 }
             }
         }
     }
-    void in_buf_load_bram(
+
+
+
+   void in_buf_load_bram(
             T buf[][(Tr - 1) * S_max + K_max][(Tc - 1) * S_max + K_max],
             Itf* i_data,
-            int in_offset, int n, int r, int c, int S, int K, int P, int R_IN, int C_IN, int N ) {
-        Itf data_tmp = 0;
-        // valid data portion
-        for (int j = r * S - P; j < (r + Tr - 1) * S + K - P ; j++) {//
-            for (int k = c * S - P; k < (c + Tc -1) * S + K - P; k++) {
-#pragma HLS PIPELINE
-                for (int i = 0; i < Tn; i += Tn) {
-#pragma HLS UNROLL
-                    if ((i + n >= N) || j < 0 || j >= R_IN || k < 0 || k >= C_IN) {
-                        for (int wr = 0; wr < Tn; wr++) {
-#pragma HLS UNROLL
-                            buf[wr][j - r * S + P][k - c * S + P] = T(0);
-                        }
-                    } else {
-                        data_tmp = *(i_data + in_offset + (i + n)/32 * R_IN * C_IN + j * R_IN + k);
-                        for (int wr = 0; wr < Tn; wr++) {
-#pragma HLS UNROLL
-                            buf[wr][j - r * S + P][k - c * S + P].range(15,0) = data_tmp.range(((n + wr)%32 + 1) * 16 - 1, ((n + wr)%32) * 16);
-                        }
-                    }
-                }
-            }
-        }
-    }
+            int in_offset,
+			int n,
+			int r,
+			int c,
+			int S,
+			int K,
+			int P,
+			int R_IN,
+			int C_IN,
+			int N )
+    {
+          Itf data_tmp = 0;
+          int z0 = n/32;
+          for(int z = n/32;z<=(n+Tn-1)/32;z++)
+          {
+              for (int j = r * S - P; j < (r + Tr - 1) * S + K - P ; j++)
+              {
+                  for (int k = c * S - P; k < (c + Tc -1) * S + K - P; k++)
+                  {
+  #pragma HLS PIPELINE
+      				if ((n >= N) || j < 0 || j >= R_IN || k < 0 || k >= C_IN)
+      				{
+      					for (int wr = 0; wr < Tn; wr++)
+      					{
+  #pragma HLS UNROLL
+      						buf[wr][j - r * S + P][k - c * S + P] = 0;
+      					}
+      				}
+      				else
+      				{
+      					data_tmp = *(i_data + in_offset + z * R_IN * C_IN + j * R_IN + k);
+      					for (int wr = 0; wr < Tn; wr++)
+      					{
+  #pragma HLS UNROLL
+      						if(z==z0)
+      						{
+      							if((n%32+wr)<32)
+      								buf[wr][j - r * S + P][k - c * S + P].range(15,0) = data_tmp.range(((n + wr)%32 + 1) * 16 - 1, ((n + wr)%32) * 16);
+      						}
+      						else
+      						{
+      							if((wr >= ((z-z0)*32-n%32)) && (wr < ((z-z0)*32-n%32)+32))
+      							{
+      								buf[wr][j - r * S + P][k - c * S + P].range(15,0) = data_tmp.range(((n + wr)%32 + 1) * 16 - 1, ((n + wr)%32) * 16);
+      								//cout << "debug   "<< buf[wr][j - r * S + P][k - c * S + P].range(15,0) <<"   wr:"<<wr<<" z:" << (z-z0)*32 << endl;
+      							}
+      						}
+      					}
+      				}
+                 }
+             }
+         }
+     }
 
     void in_buf_load(
             bool inport,
@@ -329,7 +392,7 @@ public:
                 int bias_offset,
                 int in_offset,
                 int out_offset,
-    			ap_fixed<32,26> *layer_bias,
+    			//ap_fixed<32,26> *layer_bias,
                 Itf *i_weight,
                 Itf *i_data,
                 Itf *out_data ) { // out[M][R][C]
@@ -367,7 +430,7 @@ public:
                         	if (n % (2*Tn) == 0)
                         	{
                         		//--------------------------Load input B W D in ping-pong manner-------------------------//
-                        		b_buf_load(b_buf_0, layer_bias, bias_offset, m);
+                        		b_buf_load_512(b_buf_0, layer_bias, bias_offset, m);
                         		w_buf_load_512_tm(w_buf_0, i_weight, weight_offset, n, m, K, N, M);
                         		in_buf_load(inport, in_buf_0, i_data, out_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
                         		conv_engine(in_buf_1, w_buf_1, b_buf_1, out_buf_0, S, n-Tn, N, r, c, K, R_OUT, C_OUT, 0, 0);
@@ -375,7 +438,7 @@ public:
                         	else
                         	{
                                 //--------------------------Load input B W D in ping-pong manner-------------------------//
-                                b_buf_load(b_buf_1, layer_bias, bias_offset, m);
+                                b_buf_load_512(b_buf_1, layer_bias, bias_offset, m);
                                 w_buf_load_512_tm(w_buf_1, i_weight, weight_offset, n, m, K, N, M);
                                 in_buf_load(inport, in_buf_1, i_data, out_data, in_offset, n, r, c, S, K, P, R_IN, C_IN, N);
                                 conv_engine(in_buf_0, w_buf_0, b_buf_0, out_buf_0, S, n-Tn, N, r, c, K, R_OUT, C_OUT, 0, 0);

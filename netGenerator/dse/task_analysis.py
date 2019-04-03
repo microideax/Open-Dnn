@@ -136,8 +136,10 @@ def subnet_task_analysis(pair_list, acc_task_list, sub_conv_N, sub_conv_M, sub_c
                 local_max_o = 0
                 if acc_task_list[k][l][0] == i:
                     # print("sub net", i, "acc task list", k, len(acc_task_list[k]), l)
-                    i_size = acc_task_list[k][l][1] * acc_task_list[k][l][3] * acc_task_list[k][l][3]
-                    o_size = acc_task_list[k][l][2] * acc_task_list[k][l][4] * acc_task_list[k][l][4]
+                    i_size = math.ceil(float(acc_task_list[k][l][1] * \
+                                             acc_task_list[k][l][3] * acc_task_list[k][l][3])/32)
+                    o_size = math.ceil(float(acc_task_list[k][l][2] * \
+                                             acc_task_list[k][l][4] * acc_task_list[k][l][4])/32)
                     if local_max_i < i_size:
                         local_max_i = i_size
                     if local_max_o < o_size:
