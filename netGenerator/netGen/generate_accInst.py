@@ -1,3 +1,5 @@
+import argparse
+
 def conv_default_function(idx, parameters):
 
 	creator = "conv_acc<"+",".join(parameters)+"> convAcc" + str(idx) +";"
@@ -357,7 +359,10 @@ using namespace std;'''
 	print("ok")
 
 if __name__ == "__main__":
-	generate_file("acc_ins_params.txt", "acc_instance.h")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--params", help="accelerator param file")
+    args = parser.parse_args()
+    generate_file(args.params, "acc_instance.h")
 
 
 

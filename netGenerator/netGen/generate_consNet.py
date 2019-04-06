@@ -1,3 +1,5 @@
+import argparse
+
 def gen_sub_head():
 
     strs = '''
@@ -255,4 +257,7 @@ def generate_consnet(ps_file, store_file):
 
 
 if __name__ == "__main__":
-    generate_consnet("acc_ins_params.txt", "construct_net.h")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--params", help="accelerator param file")
+    args = parser.parse_args()
+    generate_consnet(args.params, "construct_net.h")
