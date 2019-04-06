@@ -25,5 +25,8 @@ the authors, and full and complete attribution for use of the code is given in
 any resulting publications. Subject to these conditions, the software is
 provided free of charge to all interested parties.
 
-When referencing this particular open-source software in a publication, please cite the following publication:
-Yao Chen, Jiong He, Xiaofan Zhang, Cong Hao and Deming Chen, "Cloud-DNN: An Open Framework for Mapping DNN Models to Cloud FPGAs", Proceedings of ACM/SIGDA International Symposium on Field Programmable Gate Arrays, February 2019.
+When referencing this particular open-source software in a publication, please 
+cite the following publication:
+Yao Chen, Jiong He, Xiaofan Zhang, Cong Hao and Deming Chen, "Cloud-DNN: An Open 
+Framework for Mapping DNN Models to Cloud FPGAs", Proceedings of ACM/SIGDA 
+International Symposium on Field Programmable Gate Arrays, February 2019.

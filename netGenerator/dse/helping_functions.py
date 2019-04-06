@@ -228,8 +228,7 @@ def extraction(arr):
     val = ""
     if nn_in_number_fc_values != 0:
         for j in range(len(nn_in_number_fc_values)):
-            val += str(int(nn_in_number_fc_values[j])*int(nn_out_number_fc_values[j])*\
-				   int(nn_channel_size_fc_values[j])*int(nn_channel_size_fc_values[j]))
+            val += str(int(nn_in_number_fc_values[j])*int(nn_out_number_fc_values[j])*int(nn_channel_size_fc_values[j])*int(nn_channel_size_fc_values[j]))
             if (j+1) != len(nn_in_number_fc_values):
                 val += " + "
         arr1.append(val)

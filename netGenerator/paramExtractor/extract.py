@@ -215,8 +215,9 @@ def extract_caffe_model(model, weights, output_path, storefile):
                             in_num = tmp_dim_list[-2][-1]
                         if len(tmp_dim_list[-2]) == 4:
                             in_num = tmp_dim_list[-2][-1] * tmp_dim_list[-2][-2] * tmp_dim_list[-2][-3]
-            # nn_channel_size_fc
-            # nn_in_data_size_fc
+            #TODO: here is an error with fc in data size, need to be modified
+            nn_channel_size_fc.append(1)
+            #nn_in_data_size_fc.append(1)
             nn_out_number_fc.append(output)
             nn_in_number_fc.append(in_num)
 

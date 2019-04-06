@@ -15,7 +15,7 @@ using namespace std;
 
 void sub_net_0(
 				Tparam param_port[1024],
-				ap_fixed<32,26> bias_in[4096],
+//				ap_fixed<32,26> bias_in[4096],
 				data_type_itf weight_in[131072],
 				data_type_itf data_in_0[65536],
 				data_type_itf data_out_0[32768],

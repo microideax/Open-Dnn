@@ -105,7 +105,7 @@ def subnet_task_analysis(pair_list, acc_task_list, sub_conv_N, sub_conv_M, sub_c
     #sub_net, 0, 2,              1024, 4096,2048,2048,2048,2048,2048
     #sub_net, 1, 2,1024,4096,2048,2048,2048,2048,2048
     #sub_net, 2, 2,1024,4096,2048,2048,2048,2048,2048
-    subnet_task_list = [[],[],[]]
+    subnet_task_list = [[], [], []]
     acc_num = []
     param_num = []
     bias = []
@@ -123,10 +123,11 @@ def subnet_task_analysis(pair_list, acc_task_list, sub_conv_N, sub_conv_M, sub_c
         max_i_num = 0
         max_o_num = 0
         for j in range(0, len(sub_conv_N[i])):
+            layer_b = sub_conv_M[i][j]
+            # sub_b_num += math.ceil(float(layer_b) / 32)
+            sub_w_num += math.ceil(float(layer_b) / 32)
             layer_w = sub_conv_N[i][j] * sub_conv_M[i][j] * sub_conv_K[i][j] * sub_conv_K[i][j]
             sub_w_num += math.ceil(float(layer_w)/32)
-            layer_b = sub_conv_M[i][j]
-            sub_b_num += math.ceil(float(layer_b)/32)
         data_i = []
         acc_max_i = []
         acc_max_o = []
@@ -151,7 +152,7 @@ def subnet_task_analysis(pair_list, acc_task_list, sub_conv_N, sub_conv_M, sub_c
         subnet_task_list[i].append(i)
         subnet_task_list[i].append(pair_list[i][0][0])
         subnet_task_list[i].append(1024)
-        subnet_task_list[i].append(sub_b_num)
+        subnet_task_list[i].append(sub_w_num)
         subnet_task_list[i].append(data_i)
 
     return subnet_task_list

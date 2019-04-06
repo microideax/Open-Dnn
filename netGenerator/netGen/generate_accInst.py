@@ -334,7 +334,9 @@ def switch_function(idx, flag, parameters):
 
 def generate_file(ps_file, store_file):
 	ps = load_parameter(ps_file)
+
 	keys = ["conv", "max_pool", "fc", "conv_pool"]
+
 	with open(store_file, "w") as wf:
 		strs = '''#ifndef _ACC_INSTANCE_H_
 #define _ACC_INSTANCE_H_
@@ -344,8 +346,9 @@ def generate_file(ps_file, store_file):
 #include "max_pool_acc_innerpp.h"\n
 using namespace std;'''
 		wf.write(strs + "\n")
-
 		for key in keys:
+			if key not in ps:
+				continue
 			lists = ps[key]
 			for i in range(len(lists)):
 				head, func = switch_function(i, key, lists[i])
@@ -354,7 +357,7 @@ using namespace std;'''
 	print("ok")
 
 if __name__ == "__main__":
-	generate_file("acc_ins_param.txt", "acc_instance.h")
+	generate_file("acc_ins_params.txt", "acc_instance.h")
 
 
 
