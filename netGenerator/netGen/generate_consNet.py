@@ -73,20 +73,20 @@ def gen_data_pragma(parameters):
     '''
     if str(parameters[0]) == '1':
         data_pragma += '''
-#pragma HLS INTERFACE bram port=data_out_0
+#pragma HLS INTERFACE ap_memory port=data_out_0 latency=3
     '''
     if str(parameters[0]) == '2':
         data_pragma += '''
-#pragma HLS INTERFACE bram port=data_out_0
-#pragma HLS INTERFACE bram port=data_in_1
+#pragma HLS INTERFACE ap_memory port=data_out_0 latency=3
+#pragma HLS INTERFACE ap_memory port=data_in_1 latency=3
 #pragma HLS INTERFACE bram port=data_out_1        
         '''
     if str(parameters[0]) == '3':
         data_pragma += '''
-#pragma HLS INTERFACE bram port=data_out_0
-#pragma HLS INTERFACE bram port=data_in_1
-#pragma HLS INTERFACE bram port=data_out_1 
-#pragma HLS INTERFACE bram port=data_in_2
+#pragma HLS INTERFACE ap_memory port=data_out_0 latency=3
+#pragma HLS INTERFACE ap_memory port=data_in_1 latency=3
+#pragma HLS INTERFACE ap_memory port=data_out_1 latency=3
+#pragma HLS INTERFACE ap_memory port=data_in_2 latency=3
 #pragma HLS INTERFACE bram port=data_out_2        
             '''
     return data_pragma

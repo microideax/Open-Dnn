@@ -42,8 +42,9 @@ cp ../fpga_cnn/src/* ../gen_proj/hls_proj/src/
 cp ../fpga_cnn/testbench/* ../gen_proj/hls_proj/testbench/
 mv *.h ../gen_proj/hls_proj/src/
 
-#cp hls_script.tcl to hls_proj/
-#cp impl_script.tcl to impl_proj/
+cp ../scripts/hls_impl/hls_script.tcl ../gen_proj/hls_proj/
+cp ../scripts/sys_gen/impl_script.tcl ../gen_proj/impl_proj/
+
 echo "Files copied"
 echo "Generation done!!!"
 
