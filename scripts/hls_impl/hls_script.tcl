@@ -1,57 +1,55 @@
-## This file is generated automatically by Vivado HLS.
-## Please DO NOT edit it.
-## Copyright (C) 2015 Xilinx Inc. All rights reserved.
-############################################################
-open_project inf_net_0_sim
+##############################################################################
+## This file is modified from the tcl script generated with vivado_hls 2018.2.
+## This modified version is used to ease the run of synthesis of the sub_nets.
+## Please edit based on the user manual if necessary.
+##############################################################################
 
-set_top inf_net_0
+#if { $argc != 1} {
+#    puts "The hls_script.tcl script requires only one input."
+#    puts "For example. hls_script.tcl 0"
+#    puts "Please try again"
+#} else {
+#    puts [$PNUM = $argv 0]
+#}
 
-#add_files ../inference_net/activation_functions.h
-add_files ../inference_net/config.h
-add_files ../inference_net/construct_net.h
-add_files ../inference_net/conv_acc_innerpp.h
-add_files ../inference_net/max_pool_acc_innerpp.h
-add_files ../inference_net/data_type.h
-add_files ../inference_net/acc_instance.h
-add_files ../inference_net/data_type.h
-
-add_files -tb ../inference_net/image_converter.h
-add_files -tb ../inference_net/resize_image.h
-add_files -tb ../inference_net/accuracy_one_dim.h
-add_files -tb ../inference_net/predict_one_dim.h
-add_files -tb ../inference_net/softmax_one_dim.h
-add_files -tb ../inference_net/weight_bias_one_dim.h
-add_files -tb ../inference_net/stb_image/stb_image.h
-add_files -tb ../inference_net/stb_image/stb_image_resize.h
-add_files -tb ../inference_net/stb_image/stb_image_write.h
-
-add_files ../ff_test.cpp
-add_files -tb ../net_inputs/test_imgs/3.bmp
-add_files -tb ../net_inputs/net_weights.txt
-add_files -tb ../net_inputs/val.txt
-add_files -tb ../net_inputs/net_mean.txt
-
-add_files -cflags "-I/nfs/app/Xilinx/Vivado_HLS/2017.1/include -std=c++0x -fpermissive -pedantic -Wall -Wextra" -tb ../ff_test.cpp
+open_project ip_gen
 
 
-open_solution -reset "inference_IP"
-#vc709
-#set_part {xc7vx690tffg1761-2}
-#zynq-7000 board
-#set_part {xc7z045ffg900-1} 
-# zedboard
-#set_part {xc7z020clg484-1}  
-# UltraScale+ 
-set_part {xcvu9p-flgb2104-2-i}
-create_clock -period 5 -name default
-config_interface -m_axi_addr64 -m_axi_offset off -register_io off
+#add design files to the project
+add_files ./src/data_type.h
+add_files ./src/config.h
+add_files ./src/activation_functions.h
+add_files ./src/conv_acc_2ibuf.h
+add_files ./src/max_pool_acc_innerpp.h
+add_files ./src/fc_acc_innerpp.h
+add_files ./src/acc_instance.h
+add_files ./src/construct_net.h
+add_files ./src/ff_test.cpp
 
-csim_design -clean -argv {net_weights.txt, 3.bmp, val.txt, net_mean.txt}
+add_files -tb ./testbench/conv_validate.h
+add_files -tb ./testbench/conv_validate.cpp
+add_files -tb ./testbench/pooling_validate.h
+add_files -tb ./testbench/pooling_validate.cpp
+add_files -tb ./testbench/fc_validate.h
+add_files -tb ./testbench/fc_validate.cpp
+add_files -tb ./testbench/print_array.h
+add_files -tb ./src/ff_test.cpp
 
-csynth_design
+for {set i 0} {$i < 3} {incr i} {
+    set_top sub_net_$i
 
-#export_design -flow syn -rtl verilog -format ip_catalog
+    open_solution -reset "sub_net_$i"
+    # UltraScale+ 
+    set_part {xcvu9p-flgb2104-2-i} -tool vivado
 
-cosim_design -argv {net_weights.txt, 3.bmp, val.txt, net_mean.txt} -trace_level none -rtl verilog -tool xsim
+    create_clock -period 1.6 -name default
+    config_compile -name_max_length 500 -pipeline_loops 0
+    csim_design -clean -compiler gcc
+    csynth_design
+    cosim_design -compiler gcc -trace_level all
+    export_design -flow syn -rtl verilog -format ip_catalog
+}
 
 exit
+
+}

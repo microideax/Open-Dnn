@@ -6,7 +6,7 @@
 #include "activation_functions.h"
 using namespace std;
 
-template <typename Itf, typename pT, typename pW, typename pG, int pTn, int pTr, int pTc, int pS_max, int pK_max>
+template <typename Itf, typename Tparam, typename pT, typename pW, typename pG, int pTn, int pTr, int pTc, int pS_max, int pK_max>
 class max_pool_acc {
 
 private:

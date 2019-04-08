@@ -29,6 +29,7 @@ def gen_data_port(parameters):
         port_str = '''
         data_type_itf data_in_0['''+str(parameters[3])+'''],
         data_type_itf data_out_0['''+str(parameters[4])+'''],
+        int select ) {
         '''
     if str(parameters[0]) == '2':
         port_str = '''

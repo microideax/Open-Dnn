@@ -58,10 +58,10 @@ int main()
 			0								//int select
 			);
 
-
+/*
 	sub_net_1(
 			para_list,						//ap_uint<32> param_port[528],
-			conv_test.bias,					//ap_fixed<32,26> bias_in[1024],
+			//conv_test.bias,					//ap_fixed<32,26> bias_in[1024],
 			conv_test.weight,				//data_type_itf weight_in[2048],
 			conv_test.input_feature,	    //data_type_itf data_in_0[2048],
 			data_temp,						//data_type_itf data_out_0[2048],
@@ -73,7 +73,7 @@ int main()
 
 	sub_net_2(
 			para_list,						//ap_uint<32> param_port[528],
-			conv_test.bias,					//ap_fixed<32,26> bias_in[1024],
+			//conv_test.bias,					//ap_fixed<32,26> bias_in[1024],
 			conv_test.weight,				//data_type_itf weight_in[2048],
 			data_temp2,	    //data_type_itf data_in_0[2048],
 			data_temp3,						//data_type_itf data_out_0[2048],
@@ -81,7 +81,7 @@ int main()
 			data_temp4,//conv_test.output_feature,	    //data_type_itf data_out_1[2048],
 			0								//int select
 			);
-
+*/
 
 	cout <<"Test Finish"<<endl;
 	return 0;

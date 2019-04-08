@@ -66,7 +66,7 @@ void conv_layer_acc_1(
 	convAcc1.conv_layer_acc_2ibuf(N, K, M, R_IN, C_IN, C_OUT, R_OUT, S, P, act, inport, weight_offset, bias_offset, in_offset, out_offset,layer_bias,i_weight,i_data,out_data);
 }
 
-max_pool_acc< data_type_itf, data_type, data_type_w, data_type_o, 32, 16, 16, 2, 3> maxPoolAcc0;
+max_pool_acc< data_type_itf, Tparam, data_type, data_type_w, data_type_o, 32, 16, 16, 2, 3> maxPoolAcc0;
 
 void max_pool_layer_acc_0(
 		Tparam R_in,
@@ -85,7 +85,7 @@ void max_pool_layer_acc_0(
 		    maxPoolAcc0.max_pool_layer_mbuf(R_in, C_in, N, K, R, C, S, P, act, i_offset, o_offset, i_data, o_data);
 		};
 
-max_pool_acc< data_type_itf, data_type, data_type_w, data_type_o, 32, 16, 16, 2, 3> maxPoolAcc1;
+max_pool_acc< data_type_itf, Tparam, data_type, data_type_w, data_type_o, 32, 16, 16, 2, 3> maxPoolAcc1;
 
 void max_pool_layer_acc_1(
 		Tparam R_in,
