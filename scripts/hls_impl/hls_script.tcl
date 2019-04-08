@@ -46,7 +46,10 @@ for {set i 0} {$i < 3} {incr i} {
     config_compile -name_max_length 500 -pipeline_loops 0
     csim_design -clean -compiler gcc
     csynth_design
-    cosim_design -compiler gcc -trace_level all
+
+    # If the co-sim is required for verification, uncomment the following line.
+    #cosim_design -compiler gcc -trace_level all
+
     export_design -flow syn -rtl verilog -format ip_catalog
 }
 

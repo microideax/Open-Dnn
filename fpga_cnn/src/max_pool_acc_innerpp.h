@@ -19,9 +19,9 @@ public:
     void in_buf_load_512(
             ap_fixed<16,10> buf[][(pTr - 1) * pS_max + pK_max][(pTc - 1) * pS_max + pK_max],
             ap_int<512>* i_data,
-            int in_offset,
-            int n, int r, int c, int S, int K, int P,
-            int R, int C, int N, int R_IN, int C_IN, int TR, int TC)
+            Tparam in_offset,
+            Tparam n, Tparam r, Tparam c, Tparam S, Tparam K, Tparam P,
+            Tparam R, Tparam C, Tparam N, Tparam R_IN, Tparam C_IN, Tparam TR, Tparam TC)
     {
     	ap_int<512> data_tmp = 0;
         // valid data portion
@@ -58,7 +58,7 @@ public:
     // Max pooling computation kernel
     void pool_engine(pT in_buf[][(pTr-1)*pS_max + pK_max][(pTc-1)*pS_max + pK_max],
                      pG out_buf[][pTr][pTc],
-                     int S, int n, int r, int c, int K, int R, int C, int TR, int TC) {
+                     Tparam S, Tparam n, Tparam r, Tparam c, Tparam K, Tparam R, Tparam C, Tparam TR, Tparam TC) {
         if (n >= 0) {
             for (int i = 0; i < K; i++) {
                 for (int j = 0; j < K; j++) {
@@ -83,8 +83,8 @@ public:
     // Ouput out_buf data to output interface
     void output_res_512(pG out_buf[][pTr][pTc],
                         Itf *out_data,
-                        int out_offset,
-                        int n, int r, int c, int N, int R, int C, bool act) {
+                        Tparam out_offset,
+                        Tparam n, Tparam r, Tparam c, Tparam N, Tparam R, Tparam C, bool act) {
 
         Itf out_tmp = 0;
         Itf ex_out_tmp = 0;
@@ -115,23 +115,23 @@ public:
     }
 ///////////////////////------------------conv accelerator----------------//////////////////////////
 	void max_pool_layer_mbuf(
-            int R_IN,    // input Row
-            int C_IN,    // input column
-            int N,       //input feature number
-            int K,       //input kernel size
-            int R,       // output Row
-            int C,       // output column
-            int S,       // stride size
-            int P,       // padding size
-            int act,     // activation function bit (1-- with act, 0--without act)
-            int i_offset,
-            int o_offset,
+            Tparam R_IN,    // input Row
+            Tparam C_IN,    // input column
+            Tparam N,       //input feature number
+            Tparam K,       //input kernel size
+            Tparam R,       // output Row
+            Tparam C,       // output column
+            Tparam S,       // stride size
+            Tparam P,       // padding size
+            Tparam act,     // activation function bit (1-- with act, 0--without act)
+            Tparam i_offset,
+            Tparam o_offset,
             Itf *i_data,
             Itf *o_data)
 	{
 
-        int TR=0;
-        int TC=0;
+        Tparam TR=0;
+        Tparam TC=0;
         ap_fixed<16,10> in_buf_0[pTn][(pTr-1)*pS_max + pK_max][(pTc-1)*pS_max + pK_max];
         ap_fixed<16,10> out_buf_0[pTn][pTr][pTc];
 

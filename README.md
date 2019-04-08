@@ -48,3 +48,9 @@ Open-Dnn/
 ```
 </details>
 
+
+
+
+Notes:
+For co-sim, need to manually comment the iteration in the hls_script.tcl.
+Current hls_script.tcl is only for IP generation.
