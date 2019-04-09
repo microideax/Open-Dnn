@@ -83,14 +83,18 @@ Please follow the steps with a given alex.prototxt file and trained alex.caffemo
         ```
 run_generator.sh will automatically extract, analyze and generate the C++ code with the given alex.prototxt file. Since the alex.prototxt is given as the repo file, please only download the alex.caffemodel before executing the runtime software.
 
-1. Generating accelerator IPs. After the run_generator.sh script is executed successfully, the generated project is named as gen_proj and located at Open-Dnn/gen_proj. cd to the gen_proj/hls_proj/ folder.
+   >**:pushpin: NOTE:**
+   > - The parameter extract script is sensitive to the format of the name\type in the prototxt, please use the "" for them.
+
+
+2. Generating accelerator IPs. After the run_generator.sh script is executed successfully, the generated project is named as gen_proj and located at Open-Dnn/gen_proj. cd to the gen_proj/hls_proj/ folder.
    - execute
    		```sh
         ./syn.sh
         ```
 syn.sh will generate the 3 sub-net IPs with the C++ code and scripts generated from previous step. One could also hack the accelerators and run the testbench to verify the correctness of your change.
 
-1. Accelerator system construction. The system construction scripts are provided within the generated project folder gen_proj/impl_proj. Before constructing the accelerator system, make sure the environment is well set and the sub-net IPs are generated and located properly.
+3. Accelerator system construction. The system construction scripts are provided within the generated project folder gen_proj/impl_proj. Before constructing the accelerator system, make sure the environment is well set and the sub-net IPs are generated and located properly.
    - Local Cluster
    		```sh
         cd Open-Dnn/gen_proj/impl_proj/local_impl/
@@ -104,7 +108,7 @@ syn.sh will generate the 3 sub-net IPs with the C++ code and scripts generated f
         vivado build_system_aws.tcl
         ```
 
-1. Runtime software compilation.
+4. Runtime software compilation.
    - Local Cluster
    		```sh
         After the bitstream of the accelerator system is generated and downloaded to the UltraScale+ VU118 board. Copy the acc_runtime/local_acc/ folder to your prefered execution path. Copy the config.h file from the gen_proj/hls_proj/src/ to the local_acc/ folder. Run compilation to get the executable file.
@@ -139,6 +143,7 @@ Current hls_script.tcl is only for IP generation.
 
 For more details, please refer to the paper below.
 
+```sh
 @inproceedings{Chen2019fpga,
  author = {Chen, Yao and He, Jiong and Zhang, Xiaofan and Hao, Cong and Chen, Deming},
  title = {Cloud-DNN: An Open Framework for Mapping DNN Models to Cloud FPGAs},
@@ -154,5 +159,6 @@ For more details, please refer to the paper below.
  acmid = {3293915},
  publisher = {ACM},
  address = {New York, NY, USA},
- keywords = {cloud computing, dnn accelerator, fpga, high-level synthesis, neural network, reconfiguration},
+ keywords = {cloud computing, dnn accelerator, fpga, high-level synthesis, neural network, reconfiguration}
 }
+```
