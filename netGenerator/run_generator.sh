@@ -19,7 +19,8 @@ echo $INFILE
 mkdir -p ../gen_proj
 mkdir -p ../gen_proj/hls_proj/src
 mkdir -p ../gen_proj/hls_proj/testbench
-mkdir -p ../gen_proj/impl_proj/
+mkdir -p ../gen_proj/impl_proj/aws_impl
+mkdir -p ../gen_proj/impl_proj/local_impl
 
 echo "script executed!!!"
 #--------------1.param extract-----------------------
@@ -43,7 +44,8 @@ cp ../fpga_cnn/testbench/* ../gen_proj/hls_proj/testbench/
 mv *.h ../gen_proj/hls_proj/src/
 
 cp ../scripts/hls_impl/* ../gen_proj/hls_proj/
-cp ../scripts/sys_gen/* ../gen_proj/impl_proj/
+cp ../scripts/sys_gen/local_impl/* ../gen_proj/impl_proj/local_impl/
+cp ../scripts/sys_gen/aws_impl/* ../gen_proj/impl_proj/aws_impl/
 
 echo "Files copied"
 echo "Generation done!!!"
