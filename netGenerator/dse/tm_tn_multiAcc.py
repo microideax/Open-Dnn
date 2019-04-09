@@ -134,7 +134,7 @@ def multiAcc_dse():
 
     overall_end = time.time()
 
-    print_line("DSEoutpout")
+    print_line("DSE Output")
     print("Best Configuration Search Results for layer accelerators: ")
     for i in range(0, len(pair_list)):
         print(pair_list[i])
@@ -146,7 +146,7 @@ def multiAcc_dse():
     for acc_num in range(0, len(acc_task_list)):
         print("acc core", acc_num, " task list: ", acc_task_list[acc_num])
 
-    print_line("Subnet_task_out")
+    print_line("Subnet Task Out")
     subnet_task_list = subnet_task_analysis(pair_list, acc_task_list, sub_conv_N, sub_conv_M, sub_conv_r, \
                                       sub_conv_R, sub_conv_K, sub_conv_S, sub_flag)
     print("sub net interface list:")

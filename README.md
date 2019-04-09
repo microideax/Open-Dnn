@@ -83,7 +83,7 @@ Please follow the steps with a given alex.prototxt file and trained alex.caffemo
         ```
 run_generator.sh will automatically extract, analyze and generate the C++ code with the given alex.prototxt file. Since the alex.prototxt is given as the repo file, please only download the alex.caffemodel before executing the runtime software.
 
-   >**:pushpin: NOTE:**
+   >**:pushpin: TIPS:**
    > - The parameter extract script is sensitive to the format of the name\type in the prototxt, please use the "" for them.
 
 
@@ -92,7 +92,7 @@ run_generator.sh will automatically extract, analyze and generate the C++ code w
    		```sh
         ./syn.sh
         ```
-syn.sh will generate the 3 sub-net IPs with the C++ code and scripts generated from previous step. One could also hack the accelerators and run the testbench to verify the correctness of your change.
+syn.sh will generate the 3 sub-net IPs with the C++ code and scripts generated from previous step. One could also hack the accelerator　configurations in the acc_instance.h and call the testbench classes to verify the correctness of your change.
 
 3. Accelerator system construction. The system construction scripts are provided within the generated project folder gen_proj/impl_proj. Before constructing the accelerator system, make sure the environment is well set and the sub-net IPs are generated and located properly.
    - Local Cluster

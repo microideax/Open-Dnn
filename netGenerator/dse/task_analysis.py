@@ -18,7 +18,7 @@ def acc_task_analysis(pair_list, sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R,
         print("sub_net_cutting_point: ", pair_list[sub_net_number][0][1])
         # for sub_net_acc_core in range(0, pair_list[sub_net_number][0][0]):
         print("acc core_", acc_num_counter)
-        if pair_list[sub_net_number][0][1][0] == -1:
+        if len(pair_list[sub_net_number][0][1]) == 1 and pair_list[sub_net_number][0][1][0] == -1:
             for layer_num in range(0, len(sub_conv_N[sub_net_number])):
                 local_list = []
                 local_list.append(sub_net_number)
@@ -32,7 +32,7 @@ def acc_task_analysis(pair_list, sub_conv_N, sub_conv_M, sub_conv_r, sub_conv_R,
                 acc_task_list[acc_num_counter].append(local_list)
             acc_num_counter += 1
             print("sub_net no cut")
-        elif pair_list[sub_net_number][0][1][0] == 1:
+        elif len(pair_list[sub_net_number][0][1]) == 1 and pair_list[sub_net_number][0][1][0] == 1:
             for layer_num in range(0, pair_list[sub_net_number][0][1][0]):
                 local_list = []
                 local_list.append(sub_net_number)
