@@ -39,7 +39,7 @@ def gen_data_port(parameters):
         data_type_itf data_out_1['''+str(parameters[6])+'''],
         int select ) {
         '''
-    if str(parameters[1]) == '3':
+    if str(parameters[0]) == '3':
         port_str = '''
         data_type_itf data_in_0['''+str(parameters[3])+'''],
         data_type_itf data_out_0['''+str(parameters[4])+'''],
@@ -122,13 +122,13 @@ def gen_offset(idx, parameters):
 	{
 		acc0_mem_inport_offset = 0;
 		acc0_mem_outport_offset = 0;
-		acc1_mem_inport_offset = '''+str(int(int(parameters[3])/2))+ ''';
+		acc1_mem_inport_offset = '''+str(int(int(parameters[4])/2))+ ''';
 		acc1_mem_outport_offset = '''+str(int(int(parameters[5])/2))+''';
 	}
 	else
 	{
 		acc0_mem_inport_offset = '''+str(int(int(parameters[3])/2))+''';
-		acc0_mem_outport_offset = '''+str(int(int(parameters[5])/2))+ ''';
+		acc0_mem_outport_offset = '''+str(int(int(parameters[4])/2))+ ''';
 		acc1_mem_inport_offset = 0;
 		acc1_mem_outport_offset = 0;
 	}
@@ -146,7 +146,7 @@ def gen_offset(idx, parameters):
     {
         acc0_mem_inport_offset = 0;
         acc0_mem_outport_offset = 0;
-        acc1_mem_inport_offset = ''' + str(int(int(parameters[3]) / 2)) + ''';
+        acc1_mem_inport_offset = ''' + str(int(int(parameters[4]) / 2)) + ''';
         acc1_mem_outport_offset = ''' + str(int(int(parameters[5]) / 2)) + ''';
         acc2_mem_inport_offset = 0;
         acc2_mem_outport_offset = 0;
@@ -154,11 +154,11 @@ def gen_offset(idx, parameters):
     else
     {
         acc0_mem_inport_offset = ''' + str(int(int(parameters[3]) / 2)) + ''';
-        acc0_mem_outport_offset = ''' + str(int(int(parameters[5]) / 2)) + ''';
+        acc0_mem_outport_offset = ''' + str(int(int(parameters[4]) / 2)) + ''';
         acc1_mem_inport_offset = 0;
         acc1_mem_outport_offset = 0;
         acc2_mem_inport_offset = ''' + str(int(int(parameters[7]) / 2)) + ''';
-        acc2_mem_outport_offset = ''' + str(int(int(parameters[9]) / 2)) + ''';
+        acc2_mem_outport_offset = ''' + str(int(int(parameters[8]) / 2)) + ''';
     }
     '''
 
