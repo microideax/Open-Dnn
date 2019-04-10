@@ -141,13 +141,16 @@ def subnet_task_analysis(pair_list, acc_task_list, sub_conv_N, sub_conv_M, sub_c
                                              acc_task_list[k][l][3] * acc_task_list[k][l][3])/32)
                     o_size = math.ceil(float(acc_task_list[k][l][2] * \
                                              acc_task_list[k][l][4] * acc_task_list[k][l][4])/32)
+                    if acc_task_list[k][l][7]:
+                        o_size += math.ceil(float(acc_task_list[k][l][2] * \
+                                             acc_task_list[k][l][4] * acc_task_list[k][l][4])/32/4)
                     if local_max_i < i_size:
                         local_max_i = i_size
                     if local_max_o < o_size:
                         local_max_o = o_size
             if acc_task_list[k][l][0] == i:
-                data_i.append(local_max_i)
-                data_i.append(local_max_o)
+                data_i.append(local_max_i * 2)  #twiced for double buffering
+                data_i.append(local_max_o * 2)
         # print(i, pair_list[i][0][0], 1024, sub_b_num, sub_w_num, data_i)
         subnet_task_list[i].append(i)
         subnet_task_list[i].append(pair_list[i][0][0])

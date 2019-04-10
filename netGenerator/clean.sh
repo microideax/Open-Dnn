@@ -4,6 +4,7 @@
 rm -rf paramExtractor/*.txt
 rm -rf dse/*.txt
 rm -rf netGen/*.txt
+rm -rf netGen/*.h
 rm -rf *.h
 
 rm -rf ../gen_proj

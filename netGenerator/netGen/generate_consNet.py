@@ -35,7 +35,7 @@ def gen_data_port(parameters):
         port_str = '''
         data_type_itf data_in_0['''+str(parameters[3])+'''],
         data_type_itf data_out_0['''+str(parameters[4])+'''],
-        data_type_itf data_in_1['''+str(parameters[5])+'''],
+        data_type_itf data_in_1['''+str(parameters[4])+'''],
         data_type_itf data_out_1['''+str(parameters[6])+'''],
         int select ) {
         '''
@@ -43,9 +43,9 @@ def gen_data_port(parameters):
         port_str = '''
         data_type_itf data_in_0['''+str(parameters[3])+'''],
         data_type_itf data_out_0['''+str(parameters[4])+'''],
-        data_type_itf data_in_1['''+str(parameters[5])+'''],
+        data_type_itf data_in_1['''+str(parameters[4])+'''],
         data_type_itf data_out_1['''+str(parameters[6])+'''],
-        data_type_itf data_in_2['''+str(parameters[7])+'''],
+        data_type_itf data_in_2['''+str(parameters[6])+'''],
         data_type_itf data_out_2['''+str(parameters[8])+'''],
         int select ) {
         '''
@@ -123,7 +123,7 @@ def gen_offset(idx, parameters):
 		acc0_mem_inport_offset = 0;
 		acc0_mem_outport_offset = 0;
 		acc1_mem_inport_offset = '''+str(int(int(parameters[4])/2))+ ''';
-		acc1_mem_outport_offset = '''+str(int(int(parameters[5])/2))+''';
+		acc1_mem_outport_offset = '''+str(int(int(parameters[6])/2))+''';
 	}
 	else
 	{
@@ -147,7 +147,7 @@ def gen_offset(idx, parameters):
         acc0_mem_inport_offset = 0;
         acc0_mem_outport_offset = 0;
         acc1_mem_inport_offset = ''' + str(int(int(parameters[4]) / 2)) + ''';
-        acc1_mem_outport_offset = ''' + str(int(int(parameters[5]) / 2)) + ''';
+        acc1_mem_outport_offset = ''' + str(int(int(parameters[6]) / 2)) + ''';
         acc2_mem_inport_offset = 0;
         acc2_mem_outport_offset = 0;
     }
@@ -157,7 +157,7 @@ def gen_offset(idx, parameters):
         acc0_mem_outport_offset = ''' + str(int(int(parameters[4]) / 2)) + ''';
         acc1_mem_inport_offset = 0;
         acc1_mem_outport_offset = 0;
-        acc2_mem_inport_offset = ''' + str(int(int(parameters[7]) / 2)) + ''';
+        acc2_mem_inport_offset = ''' + str(int(int(parameters[6]) / 2)) + ''';
         acc2_mem_outport_offset = ''' + str(int(int(parameters[8]) / 2)) + ''';
     }
     '''
