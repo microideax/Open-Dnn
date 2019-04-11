@@ -54,7 +54,10 @@ Open-Dnn/
 <details>
 <summary><strong>Steps briefing for accelerator system generation</strong></summary>
 
-![alt Flow overview](https://github.com/microideax/Open-Dnn/tree/master/docs/flow.png)
+<p align="center">
+  <img width="700" height="295" src="https://github.com/microideax/Open-Dnn/tree/master/docs/flow.png">
+</p>
+
 Building an accelerator system for either local cluster or AWS cluster both requires:
 
 1. DNN description analysis
