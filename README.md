@@ -41,10 +41,10 @@ Open-Dnn/
 |-- acc_runtime
 |   |-- local_acc
 |   `-- aws_acc
-`-- fpga_cnn
-    |-- src
-    `-- testbench
-    
+|-- fpga_cnn
+|   |-- src
+|   `-- testbench
+`-- docs
 ```
 </details>
 
@@ -74,8 +74,8 @@ The generation process are the same before step 4. The differences in the rest o
 
 </details>
 
-<details>
-<summary><strong>Build your own accelerator system</strong></summary>
+
+## Build Accelerator System
 
 Please follow the steps with a given alex.prototxt file and trained alex.caffemodel to build your accelerator system. make sure your environment is well set before starting this mannual.
 
@@ -89,7 +89,8 @@ run_generator.sh will automatically extract, analyze and generate the C++ code w
 
    >**:pushpin: TIPS:**
    > - The parameter extract script is sensitive to the format of the name\type in the prototxt, please use the "" for them.
-
+   > - The run_generator.sh includes all the steps of parameter extraction, parameter analysis and code generation. If the process doesn't work with your input model description, please hack the intermediate files copied or moved after every stage in the run_generator.sh to generate your own design.
+   > - The intermediate files for alex.prototxt are provided in the docs, please copy them to the corresponding folder to run the generation if your system is constrained with the software environmental supports.
 
 2. Generating accelerator IPs. After the run_generator.sh script is executed successfully, the generated project is named as gen_proj and located at Open-Dnn/gen_proj. cd to the gen_proj/hls_proj/ folder.
    - execute
@@ -122,7 +123,9 @@ syn.sh will generate the 3 sub-net IPs with the C++ code and scripts generated f
         After the AGFI (follow the instructions for AWS F1 AGFI generation) of the accelerator system is generated and downloaded to the AWS F1 instance. Copy the acc_runtime/aws_acc/ folder to your prefered execution path. Copy the config.h file from the gen_proj/hls_proj/src/ to the aws_acc/ folder. Run compilation to get the executable file.
         ```
 
-</details>
+
+## Play With Demos
+
 
 <details>
 <summary><strong>Playing with given demos on local cluster</strong></summary>
@@ -144,6 +147,9 @@ Please follow the steps to play with a given demo with AGFI and runtime software
 Notes:
 For co-sim, need to manually comment the iteration in the hls_script.tcl.
 Current hls_script.tcl is only for IP generation.
+
+
+## Additional Resources
 
 For more details, please refer to the paper below.
 
