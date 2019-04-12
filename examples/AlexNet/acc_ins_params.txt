@@ -1,0 +1,16 @@
+conv, data_type_itf, Tparam, data_type, data_type_w, data_type_o, 96, 3, 11, 11, 5, 5, 32, 32, 32
+conv, data_type_itf, Tparam, data_type, data_type_w, data_type_o, 128, 11, 27, 27, 5, 5, 32, 32, 32
+conv, data_type_itf, Tparam, data_type, data_type_w, data_type_o, 96, 19, 13, 13, 5, 5, 32, 32, 32
+conv, data_type_itf, Tparam, data_type, data_type_w, data_type_o, 64, 17, 13, 13, 5, 5, 32, 32, 32
+conv, data_type_itf, Tparam, data_type, data_type_w, data_type_o, 64, 11, 13, 13, 5, 5, 32, 32, 32
+max_pool, data_type_itf, Tparam, data_type, data_type_w, data_type_o, 32, 16, 16, 2, 3
+max_pool, data_type_itf, Tparam, data_type, data_type_w, data_type_o, 32, 16, 16, 2, 3
+max_pool, data_type_itf, Tparam, data_type, data_type_w, data_type_o, 32, 16, 16, 2, 3
+conv_pool, 0,0,0
+conv_pool, 1,1,1
+conv_pool, 2,2
+conv_pool, 3,3
+conv_pool, 4,4,2
+sub_net_0,2,1024,20300,9662,22688,4374,14580
+sub_net_1,1,1024,27660,2704,4056
+sub_net_2,2,1024,69140,4056,4056,4056,3380

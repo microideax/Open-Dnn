@@ -44,7 +44,8 @@ Open-Dnn/
 |-- fpga_cnn
 |   |-- src
 |   `-- testbench
-`-- docs
+|-- docs
+`-- examples
 ```
 </details>
 
@@ -99,6 +100,9 @@ run_generator.sh will automatically extract, analyze and generate the C++ code w
         ```
 syn.sh will generate the 3 sub-net IPs with the C++ code and scripts generated from previous step. One could also hack the accelerator　configurations in the acc_instance.h and call the testbench classes to verify the correctness of your change.
 
+   >**:pushpin: TIPS:**
+   > - For co-sim, please uncomment the iteration in the hls_script.tcl. Current hls_script.tcl is simplified for IP generation.
+
 3. Accelerator system construction. The system construction scripts are provided within the generated project folder gen_proj/impl_proj. Before constructing the accelerator system, make sure the environment is well set and the sub-net IPs are generated and located properly.
    - Local Cluster
    		```sh
@@ -143,10 +147,6 @@ Please follow the steps to play with a given demo with AGFI and runtime software
 
 </details>
 
-
-Notes:
-For co-sim, need to manually comment the iteration in the hls_script.tcl.
-Current hls_script.tcl is only for IP generation.
 
 
 ## Additional Resources
