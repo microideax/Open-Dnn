@@ -114,7 +114,7 @@ syn.sh will generate the 3 sub-net IPs with the C++ code and scripts generated f
     cd ../impl_proj/local_impl/
     *(specify the path of the generated IPs in the build_system_local.tcl)
     use vivado tcl console to call build_system_local.tcl (either in tcl console or with terminal mode)
-```
+	```
    - AWS F1
 
    Before starting this step, please make sure the IPI design examples in the aws-fpga repo could be excuted correctly. Follow the IPI design flow provided by it.
@@ -123,7 +123,7 @@ syn.sh will generate the 3 sub-net IPs with the C++ code and scripts generated f
     cp ../impl_proj/aws_impl/* ~/aws-fpga/hdk/cl/examples/aws_acc_ipi
     *(specify the path of the generated IPs in the build_system_aws.tcl)
     use vivado to call build_system_aws.tcl (tcl console or terminal)
-```
+	```
 
 4. Runtime software compilation.
    - Local Cluster
