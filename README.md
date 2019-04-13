@@ -115,6 +115,7 @@ syn.sh will generate the 3 sub-net IPs with the C++ code and scripts generated f
     *(specify the path of the generated IPs in the build_system_local.tcl)
     use vivado tcl console to call build_system_local.tcl (either in tcl console or with terminal mode)
 	```
+
    >**:pushpin: TIPS:**
    > - You could also manually build your own accelerator system by taking the system_overview_local.pdf in the Open-Dnn/docs/ folder as a reference.
    > - Remember to specify the interface latency as 3 for the URAMs in the system.
@@ -130,6 +131,7 @@ syn.sh will generate the 3 sub-net IPs with the C++ code and scripts generated f
     *(specify the path of the generated IPs in the build_system_aws.tcl)
     use vivado to call build_system_aws.tcl (tcl console or terminal)
 	```
+
    >**:pushpin: TIPS:**
    > - You could also manually build your own accelerator system by taking the system_overview_aws.pdf in the Open-Dnn/docs/ folder as a reference.
    > - Remember to specify the interface latency as 3 for the URAMs in the system.
