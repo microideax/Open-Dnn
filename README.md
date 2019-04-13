@@ -5,18 +5,25 @@
 Cloud-Dnn is an open-source framework that maps DNN models trained by Caffe to FPGAs in the cloud for inference acceleration. It generates C++ network description and generates the final hardware accelerator IPs with the input *.prototxt DNN description. The structural optimization for FPGA implementation is provided during the synthesizable code generation. The purpose of Cloud-Dnn is to take advantage of HLS design methodology and providing more flexible and understandable DNN acceleration on cloud-FPGAs (e.g., AWS F1).
 
 
-## Hardware requirement
+### Hardware settings
 - Local cluster
 -UltraScale+ VU118 board with PCIe connection
 - AWS cluster
 -AWS F1.2Xlarge instance
 
-## Software requirement
+### OS settings
+- Local cluster
+-Ubuntu 16.04
+- AWS cluster
+-FPGA development system image (Centos 7.6)
+
+### Software requirement
 - Python 3.5
-- GCC
+- gcc g++
 - Xilinx vivado_hls 2018.2 (2018.2.op for AWS)
 - Xilinx vivado 2018.2 (2018.2.op for AWS)
 - Caffe and the required libraries (including Pycaffe)
+- aws-fpga repo
 - Drivers
 -Local: XDMA driver for UltraScale+ VU118 board
 -AWS: AWS shell IP support, EDMA(XDMA for the latest version of AWS shell) driver
@@ -50,13 +57,12 @@ Open-Dnn/
 </details>
 
 
-## Brief manual
+## Brief Manual
 
-<details>
-<summary><strong>Steps briefing for accelerator system generation</strong></summary>
+### Steps briefing
 
 <p align="center">
-  <img width="700" height="295" src="https://github.com/microideax/Open-Dnn/tree/master/docs/flow.png">
+  <img width="741" height="295" src="./docs/flow.png">
 </p>
 
 Building an accelerator system for either local cluster or AWS cluster both requires:
@@ -67,68 +73,66 @@ Building an accelerator system for either local cluster or AWS cluster both requ
 
 1. Accelerator IP generation with vivado_hls
 
-1. Accelerator System configuration
+1. Accelerator system configuration
 
 1. Host function construction and compilation
 
 The generation process are the same before step 4. The differences in the rest of the steps are explained with the detailed operations below.
 
-</details>
 
-
-## Build Accelerator System
+### Build accelerator system
 
 Please follow the steps with a given alex.prototxt file and trained alex.caffemodel to build your accelerator system. make sure your environment is well set before starting this mannual.
 
-1. Generating C++ accelerator description. After the repo is downloaded
-   - execute
-   		```sh
+1. Generating C++ accelerator description. After the repo is downloaded (no need for the caffemodel for now)
+	```sh
 		cd Open-Dnn/netGenerator
         ./run_generator.sh -i alex.prototxt
-        ```
+    ```
 run_generator.sh will automatically extract, analyze and generate the C++ code with the given alex.prototxt file. Since the alex.prototxt is given as the repo file, please only download the alex.caffemodel before executing the runtime software.
 
    >**:pushpin: TIPS:**
-   > - The parameter extract script is sensitive to the format of the name\type in the prototxt, please use the "" for them.
-   > - The run_generator.sh includes all the steps of parameter extraction, parameter analysis and code generation. If the process doesn't work with your input model description, please hack the intermediate files copied or moved after every stage in the run_generator.sh to generate your own design.
-   > - The intermediate files for alex.prototxt are provided in the docs, please copy them to the corresponding folder to run the generation if your system is constrained with the software environmental supports.
+   > - The run_generator.sh includes all the steps before generating the accelerator IPs which includes parameter extraction, parameter analysis and C++ code generation. If the process doesn't work with your input model description, please hack the intermediate files copied or moved after every stage in the run_generator.sh to generate your own design.
+   > - The steps in the run_generator.sh script could also be executed one y one with the scripts mentioned for each of the steps with the corresponding input files.
+   > - The intermediate files for alex.prototxt are provided in the examples/ folder, please copy them to the corresponding location to run the generation step by step if your system is constrained with the software environmental supports.
+   > - The parameter extract script is sensitive to the format of the name\type in the prototxt file, current version only support the word with the first letter capitalized and with "" symbol for it.
 
-2. Generating accelerator IPs. After the run_generator.sh script is executed successfully, the generated project is named as gen_proj and located at Open-Dnn/gen_proj. cd to the gen_proj/hls_proj/ folder.
-   - execute
+2. Generating accelerator IPs. After the run_generator.sh script is executed successfully, the generated project is named as gen_proj and located at Open-Dnn/gen_proj.
    		```sh
+        cd ../gen_proj/hls_proj
         ./syn.sh
         ```
 syn.sh will generate the 3 sub-net IPs with the C++ code and scripts generated from previous step. One could also hack the accelerator　configurations in the acc_instance.h and call the testbench classes to verify the correctness of your change.
 
    >**:pushpin: TIPS:**
    > - For co-sim, please uncomment the iteration in the hls_script.tcl. Current hls_script.tcl is simplified for IP generation.
+   > - The provided ff_test.cpp includes a simple testbench for the first sub_net function, which is sub_net_0, please modify and uncomment the others if you need to run co-sim for them. (It will be generated automatically in a future version.)
 
 3. Accelerator system construction. The system construction scripts are provided within the generated project folder gen_proj/impl_proj. Before constructing the accelerator system, make sure the environment is well set and the sub-net IPs are generated and located properly.
    - Local Cluster
    		```sh
-        cd Open-Dnn/gen_proj/impl_proj/local_impl/
-        vivado build_system_local.tcl
+        cd ../impl_proj/local_impl/
+        *(specify the path of the generated IPs in the build_system_local.tcl)
+        use vivado to call build_system_local.tcl (tcl console or terminal)
         ```
    - AWS F1
    		```sh
-        cd Open-Dnn/gen_proj/impl_proj/aws_impl/
-        (follow the IPI design flow and move the folder to the correct path. Currently, 
-        mkdir ~/aws-fpga/hdk/cl/examples/aws_ipi)
-        vivado build_system_aws.tcl
+        Before starting this step, please make sure the IPI design examples in the aws-fpga repo could be excuted correctly. Follow the IPI design flow provided by it.
+        mkdir ~/aws-fpga/hdk/cl/examples/aws_acc_ipi
+        cp ../impl_proj/aws_impl/* ~/aws-fpga/hdk/cl/examples/aws_acc_ipi
+        *(specify the path of the generated IPs in the build_system_aws.tcl)
+        use vivado to call build_system_aws.tcl (tcl console or terminal)
         ```
 
 4. Runtime software compilation.
    - Local Cluster
-   		```sh
         After the bitstream of the accelerator system is generated and downloaded to the UltraScale+ VU118 board. Copy the acc_runtime/local_acc/ folder to your prefered execution path. Copy the config.h file from the gen_proj/hls_proj/src/ to the local_acc/ folder. Run compilation to get the executable file.
-        ```
+        
    - AWS F1
-   		```sh
-        After the AGFI (follow the instructions for AWS F1 AGFI generation) of the accelerator system is generated and downloaded to the AWS F1 instance. Copy the acc_runtime/aws_acc/ folder to your prefered execution path. Copy the config.h file from the gen_proj/hls_proj/src/ to the aws_acc/ folder. Run compilation to get the executable file.
-        ```
+        After the AGFI (follow the instructions for AWS F1 AGFI generation) of the accelerator system is generated and downloaded to the AWS F1 instance (Follow the aws-fpga development process). Copy the acc_runtime/aws_acc/ folder to your prefered execution path. Copy the config.h file from the gen_proj/hls_proj/src/ to the aws_acc/ folder. Run compilation to get the executable file.
 
 
-## Play With Demos
+### Play With Demos
 
 
 <details>
