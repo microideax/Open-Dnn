@@ -86,8 +86,8 @@ Please follow the steps with a given alex.prototxt file and trained alex.caffemo
 
 1. Generating C++ accelerator description. After the repo is downloaded (no need for the caffemodel for now)
 	```sh
-		cd Open-Dnn/netGenerator
-        ./run_generator.sh -i alex.prototxt
+	cd Open-Dnn/netGenerator
+    ./run_generator.sh -i alex.prototxt
     ```
 run_generator.sh will automatically extract, analyze and generate the C++ code with the given alex.prototxt file. Since the alex.prototxt is given as the repo file, please only download the alex.caffemodel before executing the runtime software.
 
@@ -98,10 +98,10 @@ run_generator.sh will automatically extract, analyze and generate the C++ code w
    > - The parameter extract script is sensitive to the format of the name\type in the prototxt file, current version only support the word with the first letter capitalized and with "" symbol for it.
 
 2. Generating accelerator IPs. After the run_generator.sh script is executed successfully, the generated project is named as gen_proj and located at Open-Dnn/gen_proj.
-   		```sh
-        cd ../gen_proj/hls_proj
-        ./syn.sh
-        ```
+	```sh
+    cd ../gen_proj/hls_proj
+    ./syn.sh
+	```
 syn.sh will generate the 3 sub-net IPs with the C++ code and scripts generated from previous step. One could also hack the accelerator　configurations in the acc_instance.h and call the testbench classes to verify the correctness of your change.
 
    >**:pushpin: TIPS:**
@@ -110,26 +110,40 @@ syn.sh will generate the 3 sub-net IPs with the C++ code and scripts generated f
 
 3. Accelerator system construction. The system construction scripts are provided within the generated project folder gen_proj/impl_proj. Before constructing the accelerator system, make sure the environment is well set and the sub-net IPs are generated and located properly.
    - Local Cluster
-   		```sh
-        cd ../impl_proj/local_impl/
-        *(specify the path of the generated IPs in the build_system_local.tcl)
-        use vivado to call build_system_local.tcl (tcl console or terminal)
-        ```
+	```sh
+    cd ../impl_proj/local_impl/
+    *(specify the path of the generated IPs in the build_system_local.tcl)
+    use vivado tcl console to call build_system_local.tcl (either in tcl console or with terminal mode)
+```
    - AWS F1
-   		```sh
-        Before starting this step, please make sure the IPI design examples in the aws-fpga repo could be excuted correctly. Follow the IPI design flow provided by it.
-        mkdir ~/aws-fpga/hdk/cl/examples/aws_acc_ipi
-        cp ../impl_proj/aws_impl/* ~/aws-fpga/hdk/cl/examples/aws_acc_ipi
-        *(specify the path of the generated IPs in the build_system_aws.tcl)
-        use vivado to call build_system_aws.tcl (tcl console or terminal)
-        ```
+
+   Before starting this step, please make sure the IPI design examples in the aws-fpga repo could be excuted correctly. Follow the IPI design flow provided by it.
+	```sh
+    mkdir ~/aws-fpga/hdk/cl/examples/aws_acc_ipi
+    cp ../impl_proj/aws_impl/* ~/aws-fpga/hdk/cl/examples/aws_acc_ipi
+    *(specify the path of the generated IPs in the build_system_aws.tcl)
+    use vivado to call build_system_aws.tcl (tcl console or terminal)
+```
 
 4. Runtime software compilation.
    - Local Cluster
-        After the bitstream of the accelerator system is generated and downloaded to the UltraScale+ VU118 board. Copy the acc_runtime/local_acc/ folder to your prefered execution path. Copy the config.h file from the gen_proj/hls_proj/src/ to the local_acc/ folder. Run compilation to get the executable file.
-        
+
+   After the bitstream of the accelerator system is generated and downloaded to the UltraScale+ VU118 board. Copy the acc_runtime/local_acc/ folder to your prefered execution path. Copy the config.h file from the gen_proj/hls_proj/src/ to the local_acc/ folder. Run compilation to get the executable file.
+
+   >**:pushpin: TIPS:**
+   > - You could also manually build your own accelerator system by taking the system_overview_local.pdf in the Open-Dnn/docs/ folder as a reference.
+   > - Remember to specify the interface latency as 3 for the URAMs in the system.
+   > - Please be aware of the clocks in the system overview.
+
+
    - AWS F1
-        After the AGFI (follow the instructions for AWS F1 AGFI generation) of the accelerator system is generated and downloaded to the AWS F1 instance (Follow the aws-fpga development process). Copy the acc_runtime/aws_acc/ folder to your prefered execution path. Copy the config.h file from the gen_proj/hls_proj/src/ to the aws_acc/ folder. Run compilation to get the executable file.
+
+   After the AGFI (follow the instructions for AWS F1 AGFI generation) of the accelerator system is generated and downloaded to the AWS F1 instance (Follow the aws-fpga development process). Copy the acc_runtime/aws_acc/ folder to your prefered execution path. Copy the config.h file from the gen_proj/hls_proj/src/ to the aws_acc/ folder. Run compilation to get the executable file.
+
+   >**:pushpin: TIPS:**
+   > - You could also manually build your own accelerator system by taking the system_overview_aws.pdf in the Open-Dnn/docs/ folder as a reference.
+   > - Remember to specify the interface latency as 3 for the URAMs in the system.
+   > - Please be aware of the clocks in the system overview.
 
 
 ### Play With Demos
