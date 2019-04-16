@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Cloud-Dnn is an open-source framework that maps DNN models trained by Caffe to FPGAs in the cloud for inference acceleration. It generates C++ network description and generates the final hardware accelerator IPs with the input *.prototxt DNN description. The structural optimization for FPGA implementation is provided during the synthesizable code generation. The purpose of Cloud-Dnn is to take advantage of HLS design methodology and providing more flexible and understandable DNN acceleration on cloud-FPGAs (e.g., AWS F1).
+Cloud-Dnn is an open-source framework that maps DNN models trained by Caffe to FPGAs in the cloud for inference acceleration. It generates C++ network description as well as the final hardware accelerator IPs with the input *.prototxt DNN description. The structural optimization for FPGA implementation is provided during the synthesizable code generation. The purpose of this Cloud-Dnn is to take the advantage of HLS design methodology, and to provide more flexible and user-friendly DNN acceleration on cloud-FPGAs (e.g., AWS F1).
 
 
 ### Hardware settings
@@ -77,14 +77,14 @@ Building an accelerator system for either local cluster or AWS cluster both requ
 
 1. Host function construction and compilation
 
-The generation process are the same before step 4. The differences in the rest of the steps are explained with the detailed operations below.
+The generation processes are the same before step 4. The differences in the rest of the steps are explained with the detailed operations below.
 
 
 ### Build accelerator system
 
-Please follow the steps with a given alex.prototxt file and trained alex.caffemodel to build your accelerator system. make sure your environment is well set before starting this mannual.
+Please follow the steps with a given alex.prototxt file and a trained alex.caffemodel to build your accelerator system. Make sure your environment is well set before starting this manual.
 
-1. Generating C++ accelerator description. After the repo is downloaded (no need for the caffemodel for now)
+1. Generating C++ accelerator description. After the repo is downloaded (no need for the *.caffemodel file for now)
 	```sh
 	cd Open-Dnn/netGenerator
     ./run_generator.sh -i alex.prototxt
@@ -92,17 +92,17 @@ Please follow the steps with a given alex.prototxt file and trained alex.caffemo
 run_generator.sh will automatically extract, analyze and generate the C++ code with the given alex.prototxt file. Since the alex.prototxt is given as the repo file, please only download the alex.caffemodel before executing the runtime software.
 
    >**:pushpin: TIPS:**
-   > - The run_generator.sh includes all the steps before generating the accelerator IPs which includes parameter extraction, parameter analysis and C++ code generation. If the process doesn't work with your input model description, please hack the intermediate files copied or moved after every stage in the run_generator.sh to generate your own design.
-   > - The steps in the run_generator.sh script could also be executed one y one with the scripts mentioned for each of the steps with the corresponding input files.
+   > - The run_generator.sh includes all the steps before generating the accelerator IPs: parameter extraction, parameter analysis and C++ code generation. If the process doesn't work with your input model description, please hack the intermediate files copied or moved after every stage in the run_generator.sh to generate your own design.
+   > - The steps in the run_generator.sh script could also be executed one by one with the scripts mentioned for each of the steps with the corresponding input files.
    > - The intermediate files for alex.prototxt are provided in the examples/ folder, please copy them to the corresponding location to run the generation step by step if your system is constrained with the software environmental supports.
-   > - The parameter extract script is sensitive to the format of the name\type in the prototxt file, current version only support the word with the first letter capitalized and with "" symbol for it.
+   > - The parameter extract script is sensitive to the format of the name\type in the prototxt file. The current version only supports the word with the first letter capitalized and with "" symbol for it.
 
 2. Generating accelerator IPs. After the run_generator.sh script is executed successfully, the generated project is named as gen_proj and located at Open-Dnn/gen_proj.
 	```sh
     cd ../gen_proj/hls_proj
     ./syn.sh
 	```
-syn.sh will generate the 3 sub-net IPs with the C++ code and scripts generated from previous step. One could also hack the accelerator　configurations in the acc_instance.h and call the testbench classes to verify the correctness of your change.
+syn.sh will generate the 3 sub-net IPs with the C++ code and scripts generated from previous step. One could also hack the accelerator configurations in the acc_instance.h and call the testbench classes to verify the correctness of your change.
 
    >**:pushpin: TIPS:**
    > - For co-sim, please uncomment the iteration in the hls_script.tcl. Current hls_script.tcl is simplified for IP generation.
@@ -128,7 +128,7 @@ syn.sh will generate the 3 sub-net IPs with the C++ code and scripts generated f
 	```sh
     mkdir ~/aws-fpga/hdk/cl/examples/aws_acc_ipi
     cp ../impl_proj/aws_impl/* ~/aws-fpga/hdk/cl/examples/aws_acc_ipi
-    *(specify the path of the generated IPs in the build_system_aws.tcl)
+    *(Specify the path of the generated IPs in the build_system_aws.tcl)
     use vivado to call build_system_aws.tcl (tcl console or terminal)
 	```
 
@@ -141,7 +141,7 @@ syn.sh will generate the 3 sub-net IPs with the C++ code and scripts generated f
 4. Runtime software compilation.
    - Local Cluster
 
-   After the bitstream of the accelerator system is generated and downloaded to the UltraScale+ VU118 board. Copy the acc_runtime/local_acc/ folder to your prefered execution path. Copy the config.h file from the gen_proj/hls_proj/src/ to the local_acc/ folder. Run compilation to get the executable file.
+   After the bitstream of the accelerator system is generated and downloaded to the UltraScale+ VU118 board, copy the acc_runtime/local_acc/ folder to your prefered execution path. Copy the config.h file from the gen_proj/hls_proj/src/ to the local_acc/ folder. Run compilation to get the executable file.
 
    - AWS F1
 
