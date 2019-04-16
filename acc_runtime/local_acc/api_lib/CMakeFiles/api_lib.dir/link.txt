@@ -1,2 +1,0 @@
-/usr/bin/ar qc libapi_lib.a  CMakeFiles/api_lib.dir/src/layer.cpp.o CMakeFiles/api_lib.dir/src/acc_ctrl.cpp.o
-/usr/bin/ranlib libapi_lib.a

@@ -1,3 +1,0 @@
-/home/adsc/work/local_acc/demos/Alexnet_MultiAcc/CMakeFiles/edit_cache.dir
-/home/adsc/work/local_acc/demos/Alexnet_MultiAcc/CMakeFiles/rebuild_cache.dir
-/home/adsc/work/local_acc/demos/Alexnet_MultiAcc/CMakeFiles/read_proto.dir
