@@ -2,22 +2,20 @@
 
 # Table of Contents
 
-1. AGFI of accelerators
-2. API functions to call the accelerators
-3. Several demos
+1. AGFI number: agfi-03391747dc68cd939
+2. Testing demos on this AGFI.
+3. Make sure your sdk_setup.sh is executed successfully.
 
 # Environmental Settings
 1. F1.2Xlarge instance
 2. Pre-installed caffe framework
 3. Pre-installed Opencv
-4. Better to use FPGA image
+4. Only suitable to FPGA development AMI
 
 # How to use
-Map the AGFI to the platform
-1. cd into a demo in the demos folder
-2. map AGFI in the README file to the platform
+## Hardware setup
+*Map the AGFI to the platform first, all these demos work with the same AGFI
 
-Compile and execute the host program 
-1. cd into a demo in the demos/ folder
-2. make
-3. execute the demo with the command provided in the folder
+## Compile and execute the host program 
+1. cd into demo folder, then make
+2. execute the demo with the compiled executable file
