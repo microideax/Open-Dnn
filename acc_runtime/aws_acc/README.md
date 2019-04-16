@@ -9,7 +9,7 @@
 # Environmental Settings
 1. F1.2Xlarge instance
 2. Pre-installed caffe framework
-3. Pre-installed Opencv
+3. Pre-installed Opencv package support
 4. Only suitable to FPGA development AMI
 
 # How to use
