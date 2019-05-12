@@ -2,8 +2,7 @@
 
 ## Introduction
 
-Cloud-Dnn is an open-source framework that maps DNN models trained by Caffe to FPGAs in the cloud for inference acceleration. It generates C++ network description as well as the final hardware accelerator IPs with the input *.prototxt DNN description. The structural optimization for FPGA implementation is provided during the synthesizable code generation. The purpose of this Cloud-Dnn is to take the advantage of HLS design methodology, and to provide more flexible and user-friendly DNN acceleration on cloud-FPGAs (e.g., AWS F1).
-
+Cloud-DNN is an open-source framework that maps DNN (deep neural network) models trained by Caffe to FPGAs in the cloud for inference acceleration. It takes the input *.prototxt DNN description, generates corresponding C++ network description, and then produces the final hardware accelerator IPs through high-level synthesis. The goal of Cloud-DNN is to provide more flexible and user-friendly DNN acceleration on cloud-FPGAs (e.g., AWS F1). 
 
 ### Hardware settings
 - Local cluster
