@@ -52,9 +52,9 @@ int main()
 			conv_test.weight,				//data_type_itf weight_in[2048],
 			conv_test.input_feature,	    //data_type_itf data_in_0[2048],
 			data_temp,						//data_type_itf data_out_0[2048],
-			data_temp,						//data_type_itf data_in_1[2048],
+			// data_temp,						//data_type_itf data_in_1[2048],
 			//conv_test.output_feature,	    //data_type_itf data_out_1[2048],
-			data_temp2,
+			// data_temp2,
 			0								//int select
 			);
 
